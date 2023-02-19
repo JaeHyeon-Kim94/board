@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/authorization-server.main.iml" filepath="$PROJECT_DIR$/.idea/modules/authorization-server.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/board.iml" filepath="$PROJECT_DIR$/board.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/client.main.iml" filepath="$PROJECT_DIR$/.idea/modules/client.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/oauth2-authorization-client-server.main.iml" filepath="$PROJECT_DIR$/.idea/modules/oauth2-authorization-client-server.main.iml" />
     </modules>
   </component>
 </project>
