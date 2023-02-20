@@ -5,7 +5,7 @@
     </head>
     <body class="text-center">
         <main class="form-signin w-100 m-auto">
-            <form th:action th:object="${user}" method="post" onsubmit="_onsubmit()">
+            <form th:action th:object="${socialUser}" method="post" onsubmit="_onsubmit()">
                 <h1 class="my-3">회원가입</h1>
 
                 <p th:if="${error}" style="color:red;" th:text="${message}">에러 메시지</p>

@@ -16,8 +16,11 @@ mybatis:
     map-underscore-to-camel-case: true
   mapper-locations: classpath:mapper/**/*.xml
 
+file:
+  jwks:
+    path: C:\\spring\\board\\oauth2-authorization-client-server\\src\\main\\resources\\static\\oauth2\\jwks
 
-custom:
-  jwt:
-    trusted-issuerUri:
-      - https://accounts.google.com
+
+token:
+  issuer: http://127.0.0.1:9001
+  audience: http://127.0.0.1:8081

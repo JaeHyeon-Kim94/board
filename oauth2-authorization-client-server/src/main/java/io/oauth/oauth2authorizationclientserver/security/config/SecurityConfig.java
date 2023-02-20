@@ -4,11 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.JdbcOAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.AuthenticatedPrincipalOAuth2AuthorizedClientRepository;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
+
+import javax.sql.DataSource;
 
 @Configuration
 public class SecurityConfig {
@@ -22,12 +26,17 @@ public class SecurityConfig {
 
     @Bean
     public OAuth2AuthorizedClientService authorizedClientService() {
-        return new JdbcOAuth2AuthorizedClientService(jdbcTemplate(), clientRegistrationRepository);
+        return new JdbcOAuth2AuthorizedClientService(jdbcTemplate(null), clientRegistrationRepository);
     }
 
     @Bean
-    public JdbcTemplate jdbcTemplate(){
-        return new JdbcTemplate();
+    public PasswordEncoder passwordEncoder(){
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+    @Bean
+    public JdbcTemplate jdbcTemplate(DataSource dataSource){
+        return new JdbcTemplate(dataSource);
     }
 
 }
