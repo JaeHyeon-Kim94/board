@@ -1,6 +1,10 @@
 package io.oauth.authorizationserver.security.customizer;
 
+import com.nimbusds.jose.HeaderParameterNames;
+import com.nimbusds.jose.JOSEObjectType;
 import io.oauth.authorizationserver.security.model.Principal;
+import io.oauth.authorizationserver.web.domain.Role;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.OAuth2TokenType;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames;
@@ -13,6 +17,10 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class JwtGeneratorCustomizer implements OAuth2TokenCustomizer<JwtEncodingContext> {
     @Override
@@ -50,7 +58,8 @@ public class JwtGeneratorCustomizer implements OAuth2TokenCustomizer<JwtEncoding
                 .notBefore(now)
                 .expiresAt(now.plus(5L, ChronoUnit.SECONDS))
                 .claims(claim -> {
-                    claim.put("id", ((Principal) context.getPrincipal().getPrincipal()).getUserId());
+                    claim.put("fullname", (principal.getUserFullName()));
+                    claim.put("nickname", (principal.getNickname()));
                 })
                 .build();
 
@@ -71,9 +80,14 @@ public class JwtGeneratorCustomizer implements OAuth2TokenCustomizer<JwtEncoding
         Duration accessTokenTimeToLive = registeredClient.getTokenSettings().getAccessTokenTimeToLive();
         long minutes = accessTokenTimeToLive.toMinutes();
 
-        context.getHeaders().header("typ", "jwt").build();
+        context.getHeaders().type(JOSEObjectType.JWT.getType()).build();
 
         Principal principal = (Principal)context.getPrincipal().getPrincipal();
+
+        List<String> authorities = principal.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+
 
         JwtClaimsSet claimsSet = claims
                 .issuer(issuer)
@@ -84,8 +98,8 @@ public class JwtGeneratorCustomizer implements OAuth2TokenCustomizer<JwtEncoding
                 .expiresAt(now.plus(5L, ChronoUnit.SECONDS))
                 .claims(claim -> {
                     claim.put("id", principal.getUserId());
-                    claim.put(OAuth2ParameterNames.SCOPE, context.getAuthorizedScopes());
                     claim.putAll(principal.getAttributes());
+                    claim.put("authorities", authorities);
                 })
                 .build();
     }

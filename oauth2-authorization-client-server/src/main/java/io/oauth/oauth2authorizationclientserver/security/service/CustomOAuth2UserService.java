@@ -3,10 +3,10 @@ package io.oauth.oauth2authorizationclientserver.security.service;
 import com.nimbusds.jose.JOSEException;
 import io.oauth.oauth2authorizationclientserver.security.common.JwtGenerator;
 import io.oauth.oauth2authorizationclientserver.security.model.PrincipalDetails;
-import io.oauth.oauth2authorizationclientserver.security.repository.socialuser.SocialUserRepository;
-import io.oauth.oauth2authorizationclientserver.utils.SocialUserResolver;
+import io.oauth.oauth2authorizationclientserver.security.repository.user.UserRepository;
+import io.oauth.oauth2authorizationclientserver.utils.UserResolover;
 import io.oauth.oauth2authorizationclientserver.web.domain.Role;
-import io.oauth.oauth2authorizationclientserver.web.domain.SocialUser;
+import io.oauth.oauth2authorizationclientserver.web.domain.User;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.RequestEntity;
@@ -32,30 +32,26 @@ import java.util.*;
 @Component
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
-    private static final String MISSING_USER_INFO_URI_ERROR_CODE = "missing_user_info_uri";
-
-    private static final String MISSING_USER_NAME_ATTRIBUTE_ERROR_CODE = "missing_user_name_attribute";
-
     private static final String INVALID_USER_INFO_RESPONSE_ERROR_CODE = "invalid_user_info_response";
 
     private static final ParameterizedTypeReference<Map<String, Object>> PARAMETERIZED_RESPONSE_TYPE = new ParameterizedTypeReference<Map<String, Object>>() {
     };
 
-    private final SocialUserResolver socialUserResolver;
+    private final UserResolover userResolover;
 
     private Converter<OAuth2UserRequest, RequestEntity<?>> requestEntityConverter = new OAuth2UserRequestEntityConverter();
 
-    private final SocialUserRepository socialUserRepository;
+    private final UserRepository userRepository;
 
     private final JwtGenerator jwtGenerator;
 
     private RestOperations restOperations;
 
-    public CustomOAuth2UserService(SocialUserRepository socialUserRepository, PasswordEncoder passwordEncoder, JwtGenerator jwtGenerator) {
-        this.socialUserRepository = socialUserRepository;
+    public CustomOAuth2UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtGenerator jwtGenerator) {
+        this.userRepository = userRepository;
         this.jwtGenerator = jwtGenerator;
         this.restOperations = new RestTemplate();
-        this.socialUserResolver = new SocialUserResolver(passwordEncoder);
+        this.userResolover = new UserResolover(passwordEncoder);
     }
 
     @Transactional
@@ -69,33 +65,36 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         //OAuth2 Provider에 따라 구조, key등이 다르므로 이에 대한 처리.
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
-        SocialUser socialUser = socialUserResolver.resolve(registrationId, userAttributes);
+        User user = userResolover.resolve(registrationId, userAttributes);
 
 
         //Authentication Token에 담길 principal
         PrincipalDetails principalDetails = null;
         //DB 트랜잭션 시작
-        SocialUser foundSocialUser = socialUserRepository
-                .findByUsernameAndClientRegistrationId(socialUser.getSocialUserId(), registrationId);
+        User foundUser = userRepository
+                .findByUserId(user.getUserId());
 
         //1. inser of update
         //2. Access, ID 토큰 발급, 저장
-        if(foundSocialUser == null){
-            socialUser.setRoles(Set.of(new Role("ROLE_USER")));
-            socialUserRepository.insert(socialUser);
+        if(foundUser == null){
+            userRepository.insert(user);
         } else {
-            socialUser.setRoles(foundSocialUser.getRoles());
-            socialUserRepository.update(socialUser);
+            user.setRoles(foundUser.getRoles());
+            if(!foundUser.equals(user)){
+                userRepository.update(user);
+            }
         }
-        principalDetails = setTokenToSocialUser(userAttributes, registrationId, socialUser);
+
+        //success handler에서 client에 redirect와 함께 보낼 token을 domain에 담는다.
+        principalDetails = setTokenToSocialUser(userAttributes, registrationId, user);
 
         return principalDetails;
     }
 
     //principalDetails 데이터 바탕으로 Jwt(Access, ID)발급 후 SocialUser에 Set.
-    private PrincipalDetails setTokenToSocialUser(Map<String, Object> userAttributes, String registrationId, SocialUser socialUser) {
+    private PrincipalDetails setTokenToSocialUser(Map<String, Object> userAttributes, String registrationId, User user) {
         PrincipalDetails principalDetails;
-        principalDetails = new PrincipalDetails(socialUser, userAttributes, registrationId);
+        principalDetails = new PrincipalDetails(user, userAttributes, registrationId);
         OAuth2AccessToken accessToken;
         OidcIdToken idToken;
         try {

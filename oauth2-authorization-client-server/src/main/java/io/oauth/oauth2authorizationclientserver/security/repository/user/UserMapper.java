@@ -1,6 +1,6 @@
-package io.oauth.authorizationserver.repository;
+package io.oauth.oauth2authorizationclientserver.security.repository.user;
 
-import io.oauth.authorizationserver.web.domain.User;
+import io.oauth.oauth2authorizationclientserver.web.domain.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -8,13 +8,8 @@ import org.apache.ibatis.annotations.Param;
 public interface UserMapper {
 
     User findByUserId(String userId);
-
-    User findByNickname(String nickname);
-
     void insert(@Param("user") User user, @Param("roleId") String roleId);
-
     void update(User user);
-
-    boolean isDuplicate(String type, String value);
+    void deleteByUserId(String userId);
 
 }

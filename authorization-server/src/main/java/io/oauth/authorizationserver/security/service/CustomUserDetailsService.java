@@ -16,12 +16,12 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
 
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findByUserId(userId);
 
         if(user == null)
-            throw new UsernameNotFoundException("No user with username : " + username);
+            throw new UsernameNotFoundException("No user with userId : " + userId);
 
         return new Principal(user);
     }

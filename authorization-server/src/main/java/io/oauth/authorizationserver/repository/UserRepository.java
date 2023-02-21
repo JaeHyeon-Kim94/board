@@ -3,9 +3,13 @@ package io.oauth.authorizationserver.repository;
 import io.oauth.authorizationserver.web.domain.User;
 
 public interface UserRepository {
-    User findByUsername(String username);
+    User findByUserId(String userId);
 
-    User save(User user);
+    User findByNickname(String nickname);
 
-    boolean isDuplicated(String type, String value);
+    User insert(User user);
+
+    void update(User user);
+
+    boolean isDuplicate(String type, String value);
 }

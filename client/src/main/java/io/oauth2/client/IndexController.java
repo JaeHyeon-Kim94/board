@@ -25,15 +25,6 @@ public class IndexController {
     public void login(HttpServletRequest request, HttpServletResponse response, @PathVariable String provider) throws IOException {
         RestTemplate restTemplate = new RestTemplate();
 
-
-        RestTemplateBuilder builder = new RestTemplateBuilder();
-        RestTemplate build = builder.setConnectTimeout(Duration.of(20L, ChronoUnit.SECONDS))
-                .setReadTimeout(Duration.of(20L, ChronoUnit.SECONDS))
-                .build();
-
-//        ResponseEntity<String> exchange
-//                = build.exchange("http://127.0.0.1:9001/oauth2/authorization/google", HttpMethod.GET, null, String.class);
-
         response.sendRedirect("http://127.0.0.1:9001/oauth2/authorization/"+provider);
 
     }

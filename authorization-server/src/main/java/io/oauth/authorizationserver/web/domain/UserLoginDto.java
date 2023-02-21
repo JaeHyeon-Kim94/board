@@ -14,7 +14,7 @@ public class UserLoginDto {
     @NotBlank
     @Pattern(regexp = "^(\\w)*$")
     @Length(min=3, max=10)
-    private String username;
+    private String userId;
 
     @NotBlank
     private String password;

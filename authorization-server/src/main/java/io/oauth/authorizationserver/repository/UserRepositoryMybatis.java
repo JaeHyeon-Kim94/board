@@ -1,5 +1,6 @@
 package io.oauth.authorizationserver.repository;
 
+import io.oauth.authorizationserver.web.domain.Role;
 import io.oauth.authorizationserver.web.domain.User;
 import org.springframework.stereotype.Repository;
 
@@ -13,18 +14,32 @@ public class UserRepositoryMybatis implements UserRepository{
     }
 
     @Override
-    public User findByUsername(String username) {
-        return userMapper.findByUsername(username);
-    }
-
-    @Override
-    public User save(User user) {
-        userMapper.save(user);
+    public User findByUserId(String userId) {
+        User user = userMapper.findByUserId(userId);
         return user;
     }
 
     @Override
-    public boolean isDuplicated(String type, String value) {
+    public User findByNickname(String nickname) {
+        return userMapper.findByNickname(nickname);
+    }
+
+    @Override
+    public User insert(User user) {
+        Role defaultUserRole = Role.getDefaultUserRole();
+        user.getRoles().add(defaultUserRole);
+
+        userMapper.insert(user, defaultUserRole.getId());
+        return user;
+    }
+
+    @Override
+    public void update(User user) {
+        userMapper.update(user);
+    }
+
+    @Override
+    public boolean isDuplicate(String type, String value) {
         return userMapper.isDuplicate(type, value);
     }
 }

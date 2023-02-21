@@ -14,11 +14,11 @@ import java.util.Map;
 public class Principal implements UserDetails, Serializable {
     private static final long serialVersionUID = SpringSecurityCoreVersion.SERIAL_VERSION_UID;
     private User user;
-    private Map<String, Object> attributes = new HashMap<>();
+    private final Map<String, Object> attributes;
     public Principal(User user) {
         this.user = user;
-
-        attributes.put("fullName", user.getFullName());
+        attributes = new HashMap<>();
+        attributes.put("fullName", user.getFullname());
         attributes.put("nickname", user.getNickname());
         attributes.put("phone", user.getPhone());
         attributes.put("email", user.getEmail());
@@ -29,11 +29,9 @@ public class Principal implements UserDetails, Serializable {
         return this.attributes;
     }
 
-    public Long getUserId(){ return user.getId(); }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptySet();
+        return user.getRoles();
     }
 
     @Override
@@ -43,7 +41,19 @@ public class Principal implements UserDetails, Serializable {
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return getUserId();
+    }
+
+    public String getNickname(){
+        return user.getNickname();
+    }
+
+    public String getUserId(){
+        return user.getUserId();
+    }
+
+    public String getUserFullName(){
+        return user.getFullname();
     }
 
     @Override

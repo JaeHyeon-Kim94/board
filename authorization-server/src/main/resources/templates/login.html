@@ -10,9 +10,9 @@
                 <p th:if="${error}" style="color:red;" th:text="${message}">아이디 혹은 비밀번호가 틀렸습니다.</p>
 
                 <div class="row mb-5">
-                    <label for="username" class="col-2 col-form-label">id</label>
+                    <label for="userId" class="col-2 col-form-label">id</label>
                     <div class="col-10">
-                        <input type="text" class="form-control" placeholder="ID" id="username" name="username" autofocus/>
+                        <input type="text" class="form-control" placeholder="ID" id="userId" name="userId" autofocus/>
                     </div>
                 </div>
                 <div class="row mb-5">
@@ -33,10 +33,10 @@
     <script>
         function _onsubmit(){
 
-            let username = document.getElementById('username').value;
+            let userId = document.getElementById('userId').value;
             let password = document.getElementById('password').value;
 
-            if(isNullOrEmpty(username) || isNullOrEmpty(password)){
+            if(isNullOrEmpty(userId) || isNullOrEmpty(password)){
                 alert("아이디 혹은 비밀번호 입력해주세요.");
                 return;
             }

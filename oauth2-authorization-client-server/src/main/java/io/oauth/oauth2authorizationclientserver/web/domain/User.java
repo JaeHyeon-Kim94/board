@@ -1,19 +1,17 @@
-package io.oauth.authorizationserver.web.domain;
+package io.oauth.oauth2authorizationclientserver.web.domain;
 
 import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
 @Getter
 @Setter
-@ToString
-@EqualsAndHashCode(exclude = {"roles", "modDate"})
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@EqualsAndHashCode(exclude =
+        {"password", "modDate", "providerId"
+        , "regDate", "roles"
+        , "idToken", "accessToken"})
 public class User {
 
     private String userId;
@@ -26,5 +24,10 @@ public class User {
     private LocalDate birth;
     private LocalDateTime regDate;
     private LocalDateTime modDate;
-    private Set<Role> roles = new HashSet<>();
+    private Set<Role> roles;
+
+    public User(String userId, String providerId) {
+        this.userId = providerId+"_"+userId;
+        this.providerId = providerId;
+    }
 }

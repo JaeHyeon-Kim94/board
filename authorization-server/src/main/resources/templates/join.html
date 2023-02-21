@@ -5,19 +5,19 @@
     </head>
     <body class="text-center">
         <main class="form-signin w-100 m-auto">
-            <form th:action th:object="${socialUser}" method="post" onsubmit="_onsubmit()">
+            <form th:action th:object="${user}" method="post" onsubmit="_onsubmit()">
                 <h1 class="my-3">회원가입</h1>
 
                 <p th:if="${error}" style="color:red;" th:text="${message}">에러 메시지</p>
 
                 <div class="row mb-5">
-                    <label for="username" class="col-sm-2 col-form-label">ID</label>
+                    <label for="userId" class="col-sm-2 col-form-label">ID</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="username"  th:errorclass="field-error" th:field="*{username}"/>
-                        <div class="field-error" th:errors="*{username}">사용할 아이디를 입력하세요.</div>
+                        <input type="text" class="form-control" id="userId"  th:errorclass="field-error" th:field="*{userId}"/>
+                        <div class="field-error" th:errors="*{userId}">사용할 아이디를 입력하세요.</div>
                     </div>
                     <div class="col-3">
-                        <button type="button" name="checkDuplicated" class="btn btn-outline-warning" onclick="isDuplicate('username')">중복 확인</button>
+                        <button type="button" name="checkDuplicated" class="btn btn-outline-warning" onclick="isDuplicate('userId')">중복 확인</button>
                     </div>
                 </div>
                 <div class="row mb-5">
@@ -28,10 +28,10 @@
                     </div>
                 </div>
                 <div class="row mb-5">
-                    <label for="fullName" class="col-sm-2 col-form-label">성명</label>
+                    <label for="fullname" class="col-sm-2 col-form-label">성명</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="fullName" th:errorclass="field-error" th:field="*{fullName}"/>
-                        <div class="field-error" th:errors="*{fullName}">성명을 입력하세요.</div>
+                        <input type="text" class="form-control" id="fullname" th:errorclass="field-error" th:field="*{fullname}"/>
+                        <div class="field-error" th:errors="*{fullname}">성명을 입력하세요.</div>
                     </div>
                 </div>
                 <div class="row mb-5">
@@ -73,12 +73,12 @@
 
     <script>
 
-        let checkUsername = false;
+        let checkUserId = false;
         let checkNickname = false;
 
         function isDuplicate(type){
 
-            const usernameRegex = new RegExp("^(\\w){3,10}$")
+            const userIdRegex = new RegExp("^(\\w){3,10}$")
             const nicknameRegex = new RegExp("^([\\w|가-힣]){3,10}$");
 
 
@@ -89,13 +89,13 @@
             if(type==='nickname'){
                 var result = nicknameRegex.test(value);
                 if(!result){
-                    alert("허용되지 않는 형식입니다. 영문, 숫자 3자~10자");
+                    alert("허용되지 않는 형식입니다. 영문, 한글, 숫자 3자~10자");
                     return;
                 }
-            }else if(type==='username'){
-                var result = usernameRegex.test(value);
+            }else if(type==='userId'){
+                var result = userIdRegex.test(value);
                 if(!result){
-                    alert("허용되지 않는 형식입니다. 영문, 한글, 숫자 3자~10자");
+                    alert("허용되지 않는 형식입니다. 영문, 숫자 3자~10자");
                     return;
                 }
             }
@@ -116,13 +116,13 @@
                         alert("사용할 수 있습니다.");
                         if(type === 'nickname'){
                             checkNickname = true;
-                        }else if(type === 'username'){
-                            checkUsername = true;
+                        }else if(type === 'userId'){
+                            checkUserId = true;
                         }
-                        if( checkNickname && checkUsername){
+                        if( checkNickname && checkUserId){
 
                             $('#sign-in').removeAttr('disabled');
-                            $('input[id=username]').attr('readonly', 'readonly');
+                            $('input[id=userId]').attr('readonly', 'readonly');
                             $('input[id=nickname]').attr('readonly', 'readonly');
                             $('button[name=checkDuplicated]').attr('disabled', 'disabled');
                         }

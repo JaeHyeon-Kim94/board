@@ -98,7 +98,7 @@ public class UserController {
     @GetMapping("/members/{type}/{value}/check-duplicated")
     public @ResponseBody ResponseEntity<Boolean> isDuplicatedNickname(@PathVariable String type, @PathVariable String value){
 
-        if(!type.equals("nickname") && !type.equals("username")){
+        if(!type.equals("nickname") && !type.equals("userId")){
             throw new IllegalArgumentException("Invalid type. only nickname or username");
         }
 

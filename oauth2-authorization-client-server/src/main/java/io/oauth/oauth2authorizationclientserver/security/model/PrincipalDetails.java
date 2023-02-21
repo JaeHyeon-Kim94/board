@@ -1,6 +1,6 @@
 package io.oauth.oauth2authorizationclientserver.security.model;
 
-import io.oauth.oauth2authorizationclientserver.web.domain.SocialUser;
+import io.oauth.oauth2authorizationclientserver.web.domain.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
@@ -14,15 +14,15 @@ import java.util.Map;
 
 public class PrincipalDetails implements OAuth2User, UserDetails {
 
-    private SocialUser socialUser;
+    private User user;
     private Map<String, Object> attributes = new HashMap<>();
 
     private OAuth2AccessToken accessToken;
     private OAuth2RefreshToken refreshToken;
     private OidcIdToken idToken;
 
-    public PrincipalDetails(SocialUser socialUser, Map<String, Object> attributes, String registrationId) {
-        this.socialUser = socialUser;
+    public PrincipalDetails(User user, Map<String, Object> attributes, String registrationId) {
+        this.user = user;
         this.attributes = setAttributes(attributes, registrationId);
     }
 
@@ -35,17 +35,17 @@ public class PrincipalDetails implements OAuth2User, UserDetails {
 
     @Override
     public String getPassword() {
-        return null;
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return socialUser.getSocialUserId();
+        return user.getUserId();
     }
 
     @Override
     public String getName() {
-        return socialUser.getFullName();
+        return user.getFullname();
     }
 
     @Override
@@ -75,7 +75,7 @@ public class PrincipalDetails implements OAuth2User, UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return socialUser.getRoles();
+        return user.getRoles();
     }
 
     public OAuth2AccessToken getAccessToken() {

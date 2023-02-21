@@ -1,4 +1,4 @@
-package io.oauth.oauth2authorizationclientserver.web.domain;
+package io.oauth.authorizationserver.web.domain;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -9,6 +9,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
+import java.util.HashSet;
 
 @Getter
 @Setter
@@ -18,14 +19,14 @@ public class UserJoinDto {
     @NotBlank
     @Pattern(regexp = "^(\\w)*$")
     @Length(min=3, max=10)
-    private String username;
+    private String userId;
 
     @NotBlank
     private String password;
 
     @NotBlank
     @Pattern(regexp = "^([\\w|가-힣|\\s])*$")
-    private String fullName;
+    private String fullname;
 
     @NotBlank
     @Length(min=3, max=10)
@@ -44,13 +45,15 @@ public class UserJoinDto {
 
     public static User toUser(UserJoinDto dto){
         return User.builder()
-                .username(dto.getUsername())
+                .userId(dto.getUserId())
+                .providerId("myOAUth")
                 .password(dto.getPassword())
-                .fullName(dto.getFullName())
+                .fullname(dto.getFullname())
                 .nickname(dto.getNickname())
                 .phone(dto.getPhone())
                 .email(dto.getEmail())
                 .birth(dto.getBirth())
+                .roles(new HashSet<>())
                 .build();
     }
 

@@ -44,6 +44,7 @@ public class DefaultSecurityConfig {
 
         http.formLogin(
                 formLoginConfigurer -> formLoginConfigurer
+                        .usernameParameter("userId")
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
         );
