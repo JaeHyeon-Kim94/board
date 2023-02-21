@@ -1,6 +1,7 @@
-package io.oauth.oauth2authorizationclientserver.security.provider;
+package io.oauth2.client.security.provider;
 
-import io.oauth.oauth2authorizationclientserver.utils.JwtUtils;
+import io.oauth2.client.security.model.CustomOAuth2AuthorizedClient;
+import io.oauth2.client.security.utils.JwtUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.security.oauth2.client.ClientAuthorizationException;
 import org.springframework.security.oauth2.client.OAuth2AuthorizationContext;
@@ -50,10 +51,15 @@ public class CustomRefreshTokenOAuth2AuthorizedClientProvider implements OAuth2A
                 authorizedClient.getClientRegistration(), authorizedClient.getAccessToken(),
                 authorizedClient.getRefreshToken(), scopes);
 
+
+
         OAuth2AccessTokenResponse tokenResponse = getTokenResponse(authorizedClient, refreshTokenGrantRequest);
 
-        return new OAuth2AuthorizedClient(context.getAuthorizedClient().getClientRegistration(),
-                context.getPrincipal().getName(), tokenResponse.getAccessToken(), tokenResponse.getRefreshToken());
+        String idToken = (String) tokenResponse.getAdditionalParameters().get("id_token");
+        OidcIdToken oidcIdToken = JwtUtils.convertTokenValueStringToOidcIdToken(idToken);
+
+        return new CustomOAuth2AuthorizedClient(context.getAuthorizedClient().getClientRegistration(),
+                context.getPrincipal().getName(), tokenResponse.getAccessToken(), tokenResponse.getRefreshToken(), oidcIdToken);
     }
 
     private OAuth2AccessTokenResponse getTokenResponse(OAuth2AuthorizedClient authorizedClient,

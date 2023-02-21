@@ -4,10 +4,10 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="io.oauth.authorizationserver.repository.UserMapper">
-    <resultMap id="userWithRolesResultMap"  type="User">
-        <id property="userId"                     column="user_id"/>
-        <id property="providerId"             column="provider_id"/>
-        <result property="password"           column="password"/>
+    <resultMap id="userWithRolesResultMap"        type="User">
+        <id property="userId"                           column="user_id"/>
+        <id property="providerId"                       column="provider_id"/>
+        <result property="password"                     column="password"/>
         <result property="fullname"                     column="fullname"/>
         <result property="nickname"                     column="nickname"/>
         <result property="phone"                        column="phone"/>
@@ -24,34 +24,34 @@
 
     <insert id="insert" parameterType="Map">
         INSERT INTO tb_user(
-        user_id,        provider_id,
-        password,       fullname,
-        nickname,       phone,
-        email,          birth
+            user_id,        provider_id,
+            password,       fullname,
+            nickname,       phone,
+            email,          birth
         )
         VALUES(
-        #{user.userId},         #{user.providerId   , jdbcType=VARCHAR},
-        #{user.password},       #{user.fullname     , jdbcType=VARCHAR},
-        #{user.nickname},       #{user.phone        , jdbcType=VARCHAR},
-        #{user.email},          #{user.birth        , jdbcType=TIMESTAMP}
+            #{user.userId},                         #{user.providerId   , jdbcType=VARCHAR},
+            #{user.password},                       #{user.fullname     , jdbcType=VARCHAR},
+            #{user.nickname},                       #{user.phone        , jdbcType=VARCHAR},
+            #{user.email},                          #{user.birth        , jdbcType=TIMESTAMP}
         );
         INSERT INTO tb_user_role(
-        tb_role_id,     tb_user_user_id
+            tb_role_id,     tb_user_user_id
         )
         VALUES(
-        #{roleId},      #{user.userId}
+            #{roleId},      #{user.userId}
         );
     </insert>
 
     <update id="update" parameterType="User">
         UPDATE tb_user
         SET
-        password    =   #{password, jdbcType=VARCHAR},
-        fullname    =   #{fullname, jdbcType=VARCHAR},
-        nickname    =   #{nickname, jdbcType=VARCHAR},
-        phone       =   #{phone,    jdbcType=VARCHAR},
-        email       =   #{email,    jdbcType=VARCHAR},
-        birth       =   #{birth,    jdbcType=TIMESTAMP}
+        password        =   #{password, jdbcType=VARCHAR},
+        fullname        =   #{fullname, jdbcType=VARCHAR},
+        nickname        =   #{nickname, jdbcType=VARCHAR},
+        phone           =   #{phone,    jdbcType=VARCHAR},
+        email           =   #{email,    jdbcType=VARCHAR},
+        birth           =   #{birth,    jdbcType=TIMESTAMP}
         WHERE
         user_id = #{userId}
     </update>
@@ -77,7 +77,7 @@
         u.user_id,      u.provider_id,  u.password,
         u.fullname,     u.nickname,     u.phone,
         u.email,        u.birth,        u.reg_date,
-        u.mod_date,
+        u.mod_date
 
         r.id, r.role_desc, r.role_name
         FROM

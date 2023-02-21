@@ -6,3 +6,7 @@ spring:
 
   messages:
     basename: messages, errors
+
+token:
+  exp: 60
+  refresh-exp: 20080

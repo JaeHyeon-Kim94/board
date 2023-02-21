@@ -5,12 +5,13 @@ import io.oauth.oauth2authorizationclientserver.security.common.JwtGenerator;
 import io.oauth.oauth2authorizationclientserver.security.model.PrincipalDetails;
 import io.oauth.oauth2authorizationclientserver.security.repository.user.UserRepository;
 import io.oauth.oauth2authorizationclientserver.utils.UserResolover;
-import io.oauth.oauth2authorizationclientserver.web.domain.Role;
 import io.oauth.oauth2authorizationclientserver.web.domain.User;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.keygen.StringKeyGenerator;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequestEntityConverter;
@@ -27,10 +28,17 @@ import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.client.UnknownContentTypeException;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Component
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
+
+    @Value("${token.refresh.exp}")
+    private Long refreshExpTerm;
 
     private static final String INVALID_USER_INFO_RESPONSE_ERROR_CODE = "invalid_user_info_response";
 
@@ -43,15 +51,18 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
     private final UserRepository userRepository;
 
+    private final StringKeyGenerator refreshTokenGenerator;
+
     private final JwtGenerator jwtGenerator;
 
     private RestOperations restOperations;
 
-    public CustomOAuth2UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtGenerator jwtGenerator) {
+    public CustomOAuth2UserService(UserRepository userRepository, StringKeyGenerator refreshTokenGenerator, JwtGenerator jwtGenerator) {
         this.userRepository = userRepository;
+        this.refreshTokenGenerator = refreshTokenGenerator;
         this.jwtGenerator = jwtGenerator;
         this.restOperations = new RestTemplate();
-        this.userResolover = new UserResolover(passwordEncoder);
+        this.userResolover = new UserResolover();
     }
 
     @Transactional
@@ -63,19 +74,20 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         Map<String, Object> userAttributes = response.getBody();
 
 
-        //OAuth2 Provider에 따라 구조, key등이 다르므로 이에 대한 처리.
+        //OAuth2 Provider에 따라 데이터 구조, key등이 다르므로 이에 대한 처리 필요함.
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         User user = userResolover.resolve(registrationId, userAttributes);
 
 
         //Authentication Token에 담길 principal
         PrincipalDetails principalDetails = null;
+        //Token 발급(Id, Access, Refresh)
+        principalDetails = setTokenToUser(userAttributes, registrationId, user);
+
         //DB 트랜잭션 시작
         User foundUser = userRepository
                 .findByUserId(user.getUserId());
 
-        //1. inser of update
-        //2. Access, ID 토큰 발급, 저장
         if(foundUser == null){
             userRepository.insert(user);
         } else {
@@ -84,26 +96,39 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 userRepository.update(user);
             }
         }
-
-        //success handler에서 client에 redirect와 함께 보낼 token을 domain에 담는다.
-        principalDetails = setTokenToSocialUser(userAttributes, registrationId, user);
-
+        /**
+         * 이 인증객체를 이용하여 요청한 Client에게 Token을 발급함.
+         *  {@link io.oauth.oauth2authorizationclientserver.security.handler.SuccessfulAuthenticationJwtResponseHandler}
+         */
         return principalDetails;
     }
 
     //principalDetails 데이터 바탕으로 Jwt(Access, ID)발급 후 SocialUser에 Set.
-    private PrincipalDetails setTokenToSocialUser(Map<String, Object> userAttributes, String registrationId, User user) {
+    private PrincipalDetails setTokenToUser(Map<String, Object> userAttributes, String registrationId, User user) {
         PrincipalDetails principalDetails;
         principalDetails = new PrincipalDetails(user, userAttributes, registrationId);
+
         OAuth2AccessToken accessToken;
         OidcIdToken idToken;
+        OAuth2RefreshToken refreshToken;
+
+        Instant iat = Instant.now();
+        Instant exp = iat.plus(refreshExpTerm, ChronoUnit.MINUTES);
+
         try {
             accessToken = (OAuth2AccessToken) jwtGenerator.generateJwt(principalDetails, OAuth2ParameterNames.ACCESS_TOKEN);
             idToken = (OidcIdToken) jwtGenerator.generateJwt(principalDetails, OidcParameterNames.ID_TOKEN);
+            refreshToken = new OAuth2RefreshToken(refreshTokenGenerator.generateKey(), iat, exp);
 
+            //principal에 add Token
             principalDetails.setAccessToken(accessToken);
             principalDetails.setIdToken(idToken);
-            principalDetails.setRefreshToken(null);
+            principalDetails.setRefreshToken(refreshToken);
+
+            //add RefreshToken, issuedAt to user(토큰 갱신 요청에 사용됨.)
+            user.setRefreshTokenValue(refreshToken.getTokenValue());
+            user.setRefreshTokenIssuedAt(LocalDateTime.ofInstant(iat, Clock.systemUTC().getZone()));
+
         } catch (JOSEException e) {
             throw new RuntimeException(e);
         }

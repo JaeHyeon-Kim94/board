@@ -35,9 +35,7 @@ public class IndexController {
                       , @RequestParam("token-type") String tokenType
                       ){
 
-        log.info("id Token : {}", idToken);
-        log.info("access Token : {}", accessToken);
-        log.info("token type : {}", tokenType);
+
 
     }
 

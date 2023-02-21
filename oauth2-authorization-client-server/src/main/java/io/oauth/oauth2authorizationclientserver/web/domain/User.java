@@ -11,7 +11,7 @@ import java.util.Set;
 @EqualsAndHashCode(exclude =
         {"password", "modDate", "providerId"
         , "regDate", "roles"
-        , "idToken", "accessToken"})
+        })
 public class User {
 
     private String userId;
@@ -22,6 +22,8 @@ public class User {
     private String phone;
     private String email;
     private LocalDate birth;
+    private String refreshTokenValue;
+    private LocalDateTime refreshTokenIssuedAt;
     private LocalDateTime regDate;
     private LocalDateTime modDate;
     private Set<Role> roles;

@@ -10,7 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.security.crypto.keygen.Base64StringKeyGenerator;
+import org.springframework.security.crypto.keygen.StringKeyGenerator;
 
+import java.util.Base64;
 import java.util.UUID;
 
 @Configuration
@@ -19,6 +22,11 @@ public class TokenConfig {
     @Bean
     public JwtGenerator jwtGenerator() throws JOSEException {
         return new JwtGenerator(rsaSecuritySigner(), rsaKey());
+    }
+
+    @Bean
+    public StringKeyGenerator refreshTokenGenerator(){
+        return new Base64StringKeyGenerator(Base64.getUrlEncoder().withoutPadding(), 96);
     }
 
     @Bean

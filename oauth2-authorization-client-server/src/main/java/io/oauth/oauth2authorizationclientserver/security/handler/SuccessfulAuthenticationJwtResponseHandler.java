@@ -28,21 +28,29 @@ public class SuccessfulAuthenticationJwtResponseHandler implements Authenticatio
     @Value("${token.audience}")
     String audience;
 
+    //Social 로그인 성공 후 Id, Access, Refresh Token 발급 성공시 토큰 응답하는 Handler.
+    //
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
         PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
         String idToken = principal.getIdToken().getTokenValue();
         String accessToken = principal.getAccessToken().getTokenValue();
+        String refreshToken = principal.getRefreshToken().getTokenValue();
 
-        if(!StringUtils.hasText(idToken)&&!StringUtils.hasText(accessToken)){
+        if(!StringUtils.hasText(idToken)
+                ||!StringUtils.hasText(accessToken)
+                ||!StringUtils.hasText(refreshToken)){
             response.sendRedirect(audience+"/error");
         }
+
         StringBuilder sb = new StringBuilder();
         sb
             .append(audience)
                 .append("/token?id-token=")
                     .append(idToken)
+                .append("&refresh-token=")
+                    .append(refreshToken)
                 .append("&access-token=")
                     .append(accessToken)
                 .append("&token-type=Bearer");

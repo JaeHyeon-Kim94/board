@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS tb_user
     `phone`           VARCHAR(100) NULL,
     `email`           VARCHAR(100) NULL,
     `birth`           DATE         NULL,
+    `refresh_token`   BLOB         NULL,
     `reg_date`        TIMESTAMP    NULL    DEFAULT CURRENT_TIMESTAMP,
     `mod_date`        TIMESTAMP    NULL    DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`user_id`),

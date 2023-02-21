@@ -14,17 +14,19 @@ import java.util.UUID;
 @Component
 public class UserResolover {
 
-    private final PasswordEncoder passwordEncoder;
-
     public User resolve(String registrationId, Map<String, Object> attributes){
         User user = null;
+
         if(registrationId.equals("google")){
+
             user = ofGoogle(registrationId, attributes);
+
         } else if(registrationId.equals("naver")){
+
             attributes = (Map<String, Object>)attributes.get("response");
             user = ofNaver(registrationId, attributes);
-        }
 
+        }
         return user;
     }
 

@@ -5,6 +5,7 @@ import io.oauth.oauth2authorizationclientserver.security.handler.SuccessfulAuthe
 import io.oauth.oauth2authorizationclientserver.security.service.CustomOAuth2UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
@@ -22,8 +23,9 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class ClientServerConfig {
 
-    @Autowired
-    private AuthenticationConfiguration authConfiguration;
+
+    @Value("${token.audience}")
+    private String audience;
 
     @Autowired private CustomOAuth2UserService customOAuthUserService;
     @Autowired private OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
@@ -48,7 +50,9 @@ public class ClientServerConfig {
                 )
                 .successHandler(successfulAuthenticationJwtResponseHandler)
                 .failureHandler((request, response, exception) -> {
-
+                    String message = exception.getMessage();
+                    log.error("oauth2 Login Error ====> {} \n, {}", message, exception.getStackTrace());
+                    response.sendRedirect(audience+"/login?error="+message);
                 })
         );
 

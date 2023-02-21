@@ -39,10 +39,10 @@ public class SecurityInitializer implements ApplicationRunner {
         Base64URL modulus = rsaKey.getModulus();
 
         Map<String, Serializable> jwks = Map.of(
-                "kty", "RSA"
-                , "e", publicExponent.toString()
-                , "kid", rsaKey.getKeyID()
-                , "n", modulus.toString()
+                    "kty",   "RSA"
+                ,   "e",        publicExponent.toString()
+                ,   "kid",      rsaKey.getKeyID()
+                ,   "n",        modulus.toString()
         );
 
         JSONObject jsonObject = new JSONObject();
@@ -58,5 +58,6 @@ public class SecurityInitializer implements ApplicationRunner {
             writer.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }    }
+        }
+    }
 }

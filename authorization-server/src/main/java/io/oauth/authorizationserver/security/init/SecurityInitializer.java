@@ -1,5 +1,6 @@
 package io.oauth.authorizationserver.security.init;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
@@ -16,6 +17,13 @@ import java.util.UUID;
 
 @Component
 public class SecurityInitializer implements ApplicationRunner {
+
+    @Value("${token.exp}")
+    private Long tokenExp;
+
+    @Value("${token.refresh-exp}")
+    private Long refreshExp;
+
 
     private final RegisteredClientRepository registeredClientRepository;
 
@@ -57,9 +65,9 @@ public class SecurityInitializer implements ApplicationRunner {
 
                 .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
                 .tokenSettings(TokenSettings.builder()
-                        .accessTokenTimeToLive(Duration.ofMinutes(60L))
+                        .accessTokenTimeToLive(Duration.ofMinutes(tokenExp))
                         .reuseRefreshTokens(true)
-                        .refreshTokenTimeToLive(Duration.ofMinutes(60L*24*7))
+                        .refreshTokenTimeToLive(Duration.ofMinutes(refreshExp))
                         .build())
                 .build();
 

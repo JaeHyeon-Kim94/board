@@ -39,7 +39,6 @@ public class DefaultSecurityConfig {
         http.authorizeRequests(request ->
                 request
                         .antMatchers("/", "/error", "/login", "/join", "/members/**/check-duplicated").permitAll()
-                        .antMatchers("/test").hasAuthority("ROLE_TEST")
                         .anyRequest().authenticated());
 
         http.formLogin(

@@ -4,6 +4,7 @@ import com.nimbusds.jose.HeaderParameterNames;
 import com.nimbusds.jose.JOSEObjectType;
 import io.oauth.authorizationserver.security.model.Principal;
 import io.oauth.authorizationserver.web.domain.Role;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.OAuth2TokenType;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
@@ -23,6 +24,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class JwtGeneratorCustomizer implements OAuth2TokenCustomizer<JwtEncodingContext> {
+
+    @Value("${token.exp}")
+    private Long exp;
+
     @Override
     public void customize(JwtEncodingContext context) {
 
@@ -55,8 +60,8 @@ public class JwtGeneratorCustomizer implements OAuth2TokenCustomizer<JwtEncoding
                 .subject(String.valueOf(principal.getUserId()))
                 .audience(Collections.singletonList(clientId))
                 .issuedAt(now)
+                .expiresAt(now.plus(exp, ChronoUnit.MINUTES))
                 .notBefore(now)
-                .expiresAt(now.plus(5L, ChronoUnit.SECONDS))
                 .claims(claim -> {
                     claim.put("fullname", (principal.getUserFullName()));
                     claim.put("nickname", (principal.getNickname()));
@@ -95,11 +100,10 @@ public class JwtGeneratorCustomizer implements OAuth2TokenCustomizer<JwtEncoding
                 .audience(Collections.singletonList(clientId))
                 .issuedAt(now)
                 .notBefore(now)
-                .expiresAt(now.plus(5L, ChronoUnit.SECONDS))
                 .claims(claim -> {
-                    claim.put("id", principal.getUserId());
-                    claim.putAll(principal.getAttributes());
+                    claim.put("nickname", principal.getNickname());
                     claim.put("authorities", authorities);
+                    claim.put("fullname", principal.getUserFullName());
                 })
                 .build();
     }

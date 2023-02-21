@@ -24,5 +24,8 @@ file:
 token:
   issuer: http://127.0.0.1:9001
   audience: http://127.0.0.1:8081
+  exp: 60
+  refresh:
+    exp: 20040
 
 

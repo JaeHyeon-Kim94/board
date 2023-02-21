@@ -48,6 +48,10 @@ public class PrincipalDetails implements OAuth2User, UserDetails {
         return user.getFullname();
     }
 
+    public String getNickname(){
+        return user.getNickname();
+    }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;
