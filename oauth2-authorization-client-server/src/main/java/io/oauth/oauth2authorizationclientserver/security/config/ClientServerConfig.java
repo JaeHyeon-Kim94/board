@@ -17,6 +17,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
+import org.springframework.security.oauth2.core.OAuth2AuthorizationServerMetadataClaimNames;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Slf4j
@@ -40,7 +41,9 @@ public class ClientServerConfig {
     public SecurityFilterChain clientServerSecurityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
-                .authorizeRequests().anyRequest().authenticated();
+                .authorizeRequests()
+                .antMatchers("/.well-known/**", "/oauth2/token").permitAll()
+                .anyRequest().authenticated();
 
 
         http.oauth2Login( oauth2LoginConfigurer -> oauth2LoginConfigurer

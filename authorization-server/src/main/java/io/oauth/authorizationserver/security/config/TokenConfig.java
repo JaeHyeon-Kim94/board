@@ -7,6 +7,7 @@ import com.nimbusds.jose.proc.SecurityContext;
 import io.oauth.authorizationserver.security.customizer.JwtGeneratorCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.oauth2.core.OAuth2RefreshToken;
 import org.springframework.security.oauth2.core.OAuth2Token;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.authorization.token.*;
@@ -26,17 +27,17 @@ public class TokenConfig {
         //JwtGenerator
         JwtGenerator jwtGenerator = jwtGenerator();
 
-        jwtGenerator.setJwtCustomizer(new JwtGeneratorCustomizer());
+        jwtGenerator.setJwtCustomizer(jwtGeneratorCustomizer());
 
         //AccessToken Generator
-        OAuth2AccessTokenGenerator oAuth2AccessTokenGenerator = new OAuth2AccessTokenGenerator();
+        OAuth2AccessTokenGenerator oAuth2AccessTokenGenerator = oAuth2AccessTokenGenerator();
 
 //        oAuth2AccessTokenGenerator.setAccessTokenCustomizer(context -> {
 //
 //        });
 
         //RefreshToken Generator
-        OAuth2RefreshTokenGenerator oAuth2RefreshTokenGenerator = new OAuth2RefreshTokenGenerator();
+        OAuth2RefreshTokenGenerator oAuth2RefreshTokenGenerator = oAuth2RefreshTokenGenerator();
 
         return new DelegatingOAuth2TokenGenerator(jwtGenerator, oAuth2AccessTokenGenerator, oAuth2RefreshTokenGenerator);
     }
@@ -47,6 +48,20 @@ public class TokenConfig {
     }
 
 
+    @Bean
+    public JwtGeneratorCustomizer jwtGeneratorCustomizer(){
+        return new JwtGeneratorCustomizer();
+    }
+
+    @Bean
+    public OAuth2AccessTokenGenerator oAuth2AccessTokenGenerator(){
+        return new OAuth2AccessTokenGenerator();
+    }
+
+    @Bean
+    public OAuth2RefreshTokenGenerator oAuth2RefreshTokenGenerator(){
+        return new OAuth2RefreshTokenGenerator();
+    }
 
     @Bean
     public NimbusJwtEncoder jwtEncoder(){

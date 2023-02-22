@@ -34,7 +34,7 @@ public class CustomeBearerTokenResolver implements BearerTokenResolver {
         if(cookies == null) return null;
         String idTokenValue = null;
         for (Cookie cookie : cookies) {
-            if(cookie.getName().equals("o_id")){
+            if(cookie.getName().equals("idt")){
                 idTokenValue = cookie.getValue();
             }
         }

@@ -49,10 +49,10 @@ public abstract class SecuritySigner {
         PrincipalDetails principal = (PrincipalDetails) user;
 
         return new JWTClaimsSet.Builder()
-                .subject(principal.getUsername())
+                .subject(principal.getName())
                 .issuer(issuer)
                 .audience(audience)
-                .claim("fullname",principal.getName())
+                .claim("fullname",principal.getUsername())
                 .claim("nickname", principal.getNickname())
                 .issueTime(iat)
                 .expirationTime(exp)
@@ -62,15 +62,15 @@ public abstract class SecuritySigner {
     }
 
     private JWTClaimsSet buildAccessTokenClaims(OAuth2User user, Date iat, Date exp) {
-
-        List<String> authorities = user.getAuthorities().stream().map(auth -> auth.getAuthority()).collect(Collectors.toList());
+        PrincipalDetails principal = (PrincipalDetails) user;
+        List<String> authorities = principal.getAuthorities().stream().map(auth -> auth.getAuthority()).collect(Collectors.toList());
 
         return new JWTClaimsSet.Builder()
                 .subject(user.getName())
                 .issuer(issuer)
                 .audience(audience)
-                .claim("username",user.getAttribute("name"))
-                .claim("nickname", user.getAttribute("nickname"))
+                .claim("username",principal.getUsername())
+                .claim("nickname", principal.getNickname())
                 .issueTime(iat)
                 .expirationTime(exp)
                 .notBeforeTime(iat)

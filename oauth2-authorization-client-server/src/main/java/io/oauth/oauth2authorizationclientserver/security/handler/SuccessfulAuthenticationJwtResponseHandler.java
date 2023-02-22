@@ -32,7 +32,8 @@ public class SuccessfulAuthenticationJwtResponseHandler implements Authenticatio
     //
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-
+        OAuth2AuthenticationToken token = (OAuth2AuthenticationToken)authentication;
+        String authorizedClientRegistrationId = token.getAuthorizedClientRegistrationId();
         PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
         String idToken = principal.getIdToken().getTokenValue();
         String accessToken = principal.getAccessToken().getTokenValue();
@@ -53,7 +54,9 @@ public class SuccessfulAuthenticationJwtResponseHandler implements Authenticatio
                     .append(refreshToken)
                 .append("&access-token=")
                     .append(accessToken)
-                .append("&token-type=Bearer");
+                .append("&token-type=Bearer")
+                .append("&reg-id=")
+                    .append(token.getAuthorizedClientRegistrationId());
 
         response.sendRedirect(sb.toString());
     }

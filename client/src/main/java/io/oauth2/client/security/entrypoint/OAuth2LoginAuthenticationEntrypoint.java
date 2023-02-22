@@ -21,6 +21,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Map;
 
@@ -56,22 +57,24 @@ public class OAuth2LoginAuthenticationEntrypoint implements AuthenticationEntryP
 
         for (Cookie cookie : cookies) {
 
-            if(cookie.getName().equals("r_id")){
+            if(cookie.getName().equals("reg")){
                 regId = cookie.getValue();
-            }else if(cookie.getName().equals("o_id")){
+            }else if(cookie.getName().equals("idt")){
                 idToken = cookie.getValue();
             }
 
         }
 
         if(!StringUtils.hasText(regId) || !StringUtils.hasText(idToken)){
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "다시 로그인해주세요.");
+            response.sendRedirect("/login");
+            return;
         }
 
         Map<String, Object> claims = JwtUtils.getClaims(idToken);
 
         if(claims.isEmpty()){
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "사용자 정보 처리 중 오류 발생");
+            response.sendRedirect("/login");
+            return;
         }
 
         regId = new String(Base64.getDecoder().decode(regId));

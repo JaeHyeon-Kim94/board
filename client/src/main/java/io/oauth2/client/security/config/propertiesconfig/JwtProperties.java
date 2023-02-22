@@ -18,4 +18,14 @@ public class JwtProperties{
     public void setTrustedIssuerUri(List<String> trustedIssuerUri) {
         this.trustedIssuerUri = trustedIssuerUri;
     }
+
+    int cookieMaxAge;
+
+    public int getCookieMaxAge() {
+        return cookieMaxAge;
+    }
+
+    public void setCookieMaxAge(int cookieMaxAge) {
+        this.cookieMaxAge = cookieMaxAge;
+    }
 }

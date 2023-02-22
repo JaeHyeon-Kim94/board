@@ -77,7 +77,7 @@
         u.user_id,      u.provider_id,  u.password,
         u.fullname,     u.nickname,     u.phone,
         u.email,        u.birth,        u.reg_date,
-        u.mod_date
+        u.mod_date,
 
         r.id, r.role_desc, r.role_name
         FROM

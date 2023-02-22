@@ -40,12 +40,12 @@ public class PrincipalDetails implements OAuth2User, UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getUserId();
+        return user.getFullname();
     }
 
     @Override
     public String getName() {
-        return user.getFullname();
+        return user.getUserId();
     }
 
     public String getNickname(){

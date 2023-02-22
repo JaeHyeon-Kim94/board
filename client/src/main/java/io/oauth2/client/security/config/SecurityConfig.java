@@ -2,7 +2,9 @@ package io.oauth2.client.security.config;
 
 import io.oauth2.client.security.common.CustomAuthorityMapper;
 import io.oauth2.client.security.entrypoint.OAuth2LoginAuthenticationEntrypoint;
+import io.oauth2.client.security.filter.SocialLoginTokenResponseProcessingFilter;
 import io.oauth2.client.security.handler.CustomOAuth2LoginSuccessHandler;
+import io.oauth2.client.security.handler.JwtLogoutHandler;
 import io.oauth2.client.security.resolver.CustomeBearerTokenResolver;
 import io.oauth2.client.security.service.CustomOAuth2UserService;
 import io.oauth2.client.security.service.CustomOidcUserService;
@@ -15,7 +17,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
+import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -30,9 +34,16 @@ public class SecurityConfig {
     private final CustomeBearerTokenResolver customeBearerTokenResolver;
     private final CustomOAuth2LoginSuccessHandler customOAuth2LoginSuccessHandler;
     private final CustomAuthorityMapper customAuthorityMapper;
-    private final DefaultOAuth2AuthorizationRequestResolver defaultOAuth2AuthorizationRequestResolver;
+    private final AuthorizationRequestRepository<OAuth2AuthorizationRequest> authorizationRequestRepository;
+    private final JwtLogoutHandler jwtLogoutHandler;
+    private final SocialLoginTokenResponseProcessingFilter socialLoginTokenResponseProcessingFilter;
 
-    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, CustomOidcUserService customOidcUserService, AuthenticationManagerResolver<HttpServletRequest> authenticationManagerResolver, OAuth2LoginAuthenticationEntrypoint oAuth2LoginAuthenticationEntrypoint, CustomeBearerTokenResolver customeBearerTokenResolver, CustomOAuth2LoginSuccessHandler customOAuth2LoginSuccessHandler, CustomAuthorityMapper customAuthorityMapper, DefaultOAuth2AuthorizationRequestResolver defaultOAuth2AuthorizationRequestResolver) {
+    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, CustomOidcUserService customOidcUserService
+            , AuthenticationManagerResolver<HttpServletRequest> authenticationManagerResolver
+            , OAuth2LoginAuthenticationEntrypoint oAuth2LoginAuthenticationEntrypoint, CustomeBearerTokenResolver customeBearerTokenResolver
+            , CustomOAuth2LoginSuccessHandler customOAuth2LoginSuccessHandler, CustomAuthorityMapper customAuthorityMapper
+            , AuthorizationRequestRepository<OAuth2AuthorizationRequest> authorizationRequestRepository
+            , JwtLogoutHandler jwtLogoutHandler, SocialLoginTokenResponseProcessingFilter socialLoginTokenResponseProcessingFilter) {
         this.customOAuth2UserService = customOAuth2UserService;
         this.customOidcUserService = customOidcUserService;
         this.authenticationManagerResolver = authenticationManagerResolver;
@@ -40,7 +51,9 @@ public class SecurityConfig {
         this.customeBearerTokenResolver = customeBearerTokenResolver;
         this.customOAuth2LoginSuccessHandler = customOAuth2LoginSuccessHandler;
         this.customAuthorityMapper = customAuthorityMapper;
-        this.defaultOAuth2AuthorizationRequestResolver = defaultOAuth2AuthorizationRequestResolver;
+        this.authorizationRequestRepository = authorizationRequestRepository;
+        this.jwtLogoutHandler = jwtLogoutHandler;
+        this.socialLoginTokenResponseProcessingFilter = socialLoginTokenResponseProcessingFilter;
     }
 
 
@@ -50,7 +63,7 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/", "/login").permitAll()
+                .antMatchers("/", "/login*", "/oauth/login/*", "/token").permitAll()
                 .anyRequest().authenticated();
 
 
@@ -60,7 +73,8 @@ public class SecurityConfig {
                         .oidcUserService(customOidcUserService)
                         .userAuthoritiesMapper(customAuthorityMapper))
                 .authorizationEndpoint(authorizationEndpointConfig -> authorizationEndpointConfig
-                        .authorizationRequestResolver(defaultOAuth2AuthorizationRequestResolver))
+                        .authorizationRequestRepository(authorizationRequestRepository)
+                )
                 .successHandler(customOAuth2LoginSuccessHandler)
                 .loginPage("/login")
         );
@@ -81,9 +95,9 @@ public class SecurityConfig {
                 .logout(logoutConfigurer -> logoutConfigurer
                         .logoutUrl("/logout")
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout", HttpMethod.GET.name()))
-                        .deleteCookies("o_id", "r_id")
+                        //.deleteCookies("o_id", "r_id")
                         .logoutSuccessUrl("/")
-                        //.addLogoutHandler(jwtLogoutHandler)
+                        .addLogoutHandler(jwtLogoutHandler)
                 );
 
         http
@@ -92,11 +106,14 @@ public class SecurityConfig {
                             .accessDeniedHandler((request, response, accessDeniedException)
                                     -> response.sendRedirect("/"))
                             .authenticationEntryPoint((request, response, authException)
-                                    -> response.sendRedirect("/login")));
+                                    -> response.sendRedirect("/")));
 
         http.sessionManagement( sessionConfigurer -> sessionConfigurer
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         );
+
+        http
+                .addFilterBefore(socialLoginTokenResponseProcessingFilter, OAuth2AuthorizationRequestRedirectFilter.class);
 
         return http.build();
     }

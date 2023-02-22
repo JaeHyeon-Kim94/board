@@ -1,5 +1,6 @@
 package io.oauth2.client;
 
+import io.oauth2.client.security.utils.CookieUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
@@ -21,22 +22,21 @@ import java.time.temporal.ChronoUnit;
 @Controller
 public class IndexController {
 
-    @GetMapping("/login/{provider}")
+    @GetMapping("/")
+    public String index(){
+        return "index";
+    }
+
+    @GetMapping("/login")
+    public String login(){
+        return "login";
+    }
+
+    @GetMapping("/oauth/login/{provider}")
     public void login(HttpServletRequest request, HttpServletResponse response, @PathVariable String provider) throws IOException {
         RestTemplate restTemplate = new RestTemplate();
 
         response.sendRedirect("http://127.0.0.1:9001/oauth2/authorization/"+provider);
 
     }
-
-    @GetMapping("/token")
-    public void token(@RequestParam("id-token") String idToken
-                      , @RequestParam("access-token") String accessToken
-                      , @RequestParam("token-type") String tokenType
-                      ){
-
-
-
-    }
-
 }

@@ -1,10 +1,12 @@
 package io.oauth2.client.security.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.oauth2.client.security.common.CustomAuthorityMapper;
 import io.oauth2.client.security.config.propertiesconfig.JwtProperties;
 import io.oauth2.client.security.entrypoint.OAuth2LoginAuthenticationEntrypoint;
 import io.oauth2.client.security.handler.CustomOAuth2LoginSuccessHandler;
 import io.oauth2.client.security.provider.CustomRefreshTokenOAuth2AuthorizedClientProvider;
+import io.oauth2.client.security.repository.HttpCookieOAuth2AuthorizationRequestRepository;
 import io.oauth2.client.security.resolver.CustomeBearerTokenResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -12,14 +14,19 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.authentication.AuthenticationManagerResolver;
 import org.springframework.security.oauth2.client.*;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.*;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.oauth2.server.resource.authentication.JwtIssuerAuthenticationManagerResolver;
 
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 @Configuration
@@ -64,8 +71,13 @@ public class OAuth2ClientConfig {
     }
 
     @Bean
+    public AuthorizationRequestRepository<OAuth2AuthorizationRequest> authorizationRequestRepository(){
+        return new HttpCookieOAuth2AuthorizationRequestRepository();
+    }
+
+    @Bean
     public OAuth2AuthorizedClientService oAuth2AuthorizedClientService(ClientRegistrationRepository clientRegistrationRepository){
-        return new InMemoryOAuth2AuthorizedClientService(clientRegistrationRepository);
+        return new JdbcOAuth2AuthorizedClientService(jdbcTemplate, clientRegistrationRepository);
     }
 
     @Bean
@@ -91,35 +103,6 @@ public class OAuth2ClientConfig {
     @Bean
     public CustomeBearerTokenResolver customeBearerTokenResolver(OAuth2AuthorizedClientService oAuth2AuthorizedClientService){
         return new CustomeBearerTokenResolver(oAuth2AuthorizedClientService);
-    }
-
-    @Bean
-    public CustomOAuth2LoginSuccessHandler customOAuth2LoginSuccessHandler(){
-        return new CustomOAuth2LoginSuccessHandler();
-    }
-
-    @Bean
-    public DefaultOAuth2AuthorizationRequestResolver defaultOAuth2AuthorizationRequestResolver(ClientRegistrationRepository clientRegistrationRepository){
-        DefaultOAuth2AuthorizationRequestResolver defaultOAuth2AuthorizationRequestResolver
-                = new DefaultOAuth2AuthorizationRequestResolver(clientRegistrationRepository, OAuth2AuthorizationRequestRedirectFilter.DEFAULT_AUTHORIZATION_REQUEST_BASE_URI);
-        defaultOAuth2AuthorizationRequestResolver.setAuthorizationRequestCustomizer(builder -> {
-            builder
-                    .attributes( map -> {
-                        if(((String)map.get("registration_id")).contains("google")){
-                            builder.additionalParameters(additionalParameterForGoogleRefreshToken());
-                        }
-                    })
-                    .build();
-        });
-        return defaultOAuth2AuthorizationRequestResolver;
-    }
-
-
-    private Consumer<Map<String, Object>> additionalParameterForGoogleRefreshToken(){
-        return additionalParameterMap -> {
-                additionalParameterMap.put("access_type", "offline");
-                additionalParameterMap.put("prompt", "consent");
-        };
     }
 
 }

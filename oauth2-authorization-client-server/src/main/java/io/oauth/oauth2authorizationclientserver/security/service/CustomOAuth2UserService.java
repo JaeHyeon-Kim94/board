@@ -79,11 +79,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         User user = userResolover.resolve(registrationId, userAttributes);
 
 
-        //Authentication Token에 담길 principal
-        PrincipalDetails principalDetails = null;
-        //Token 발급(Id, Access, Refresh)
-        principalDetails = setTokenToUser(userAttributes, registrationId, user);
-
         //DB 트랜잭션 시작
         User foundUser = userRepository
                 .findByUserId(user.getUserId());
@@ -96,6 +91,12 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 userRepository.update(user);
             }
         }
+
+        //Authentication Token에 담길 principal
+        PrincipalDetails principalDetails = null;
+        //Token 발급(Id, Access, Refresh)
+        principalDetails = setTokenToUser(userAttributes, registrationId, user);
+
         /**
          * 이 인증객체를 이용하여 요청한 Client에게 Token을 발급함.
          *  {@link io.oauth.oauth2authorizationclientserver.security.handler.SuccessfulAuthenticationJwtResponseHandler}

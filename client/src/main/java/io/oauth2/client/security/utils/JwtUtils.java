@@ -2,7 +2,12 @@ package io.oauth2.client.security.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
+import org.springframework.security.oauth2.core.OAuth2RefreshToken;
+import org.springframework.security.oauth2.core.OAuth2Token;
+import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
+import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames;
 import org.springframework.util.StringUtils;
 
 import java.time.Instant;
@@ -28,7 +33,7 @@ public class JwtUtils {
         }
     }
 
-    public static OidcIdToken convertTokenValueStringToOidcIdToken(String tokenValue){
+    public static <T extends OAuth2Token> T convertTokenValueStringToOAuth2Token(String tokenValue, String type){
         if(!StringUtils.hasText(tokenValue) && tokenValue.split("\\.").length != 3){
             return null;
         }
@@ -37,7 +42,16 @@ public class JwtUtils {
 
         Instant iat = Instant.ofEpochSecond((Integer) claims.get("iat"));
         Instant exp = Instant.ofEpochSecond((Integer) claims.get("exp"));
+        OAuth2Token token = null;
 
-        return new OidcIdToken(tokenValue, iat, exp, claims);
+        if(type.equals(OAuth2ParameterNames.ACCESS_TOKEN)){
+            token = new OAuth2AccessToken(OAuth2AccessToken.TokenType.BEARER, tokenValue, iat, exp);
+        } else if(type.equals(OidcParameterNames.ID_TOKEN)){
+            token = new OidcIdToken(tokenValue, iat, exp, claims);
+        }
+
+
+        return (T) token;
     }
+
 }

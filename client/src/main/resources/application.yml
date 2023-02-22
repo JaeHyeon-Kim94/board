@@ -7,9 +7,12 @@ spring:
     url: jdbc:mysql://localhost:3306/oauth?serverTimezone=Asia/Seoul
     username: oauth
     password: 1234
+  profiles:
+    include: oauth2
 
 custom:
   jwt:
     trusted-issuerUri:
       - http://127.0.0.1:9000
       - http://127.0.0.1:9001
+    cookie-max-age: 10

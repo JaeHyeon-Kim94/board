@@ -117,7 +117,7 @@ public class OAuth2AuthorizationConfig {
 
     private ProviderSettings providerSettings() {
         return ProviderSettings.builder()
-                .issuer("http://localhost:9000")
+                .issuer("http://127.0.0.1:9000")
                 .authorizationEndpoint("/oauth2/authorize")
                 .tokenEndpoint("/oauth2/token")
                 .jwkSetEndpoint("/oauth2/jwks")

@@ -14,6 +14,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthorizationException;
 import org.springframework.security.oauth2.core.OAuth2Token;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
+import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames;
 import org.springframework.util.Assert;
 
 import java.time.Clock;
@@ -56,7 +57,7 @@ public class CustomRefreshTokenOAuth2AuthorizedClientProvider implements OAuth2A
         OAuth2AccessTokenResponse tokenResponse = getTokenResponse(authorizedClient, refreshTokenGrantRequest);
 
         String idToken = (String) tokenResponse.getAdditionalParameters().get("id_token");
-        OidcIdToken oidcIdToken = JwtUtils.convertTokenValueStringToOidcIdToken(idToken);
+        OidcIdToken oidcIdToken = JwtUtils.convertTokenValueStringToOAuth2Token(idToken, OidcParameterNames.ID_TOKEN);
 
         return new CustomOAuth2AuthorizedClient(context.getAuthorizedClient().getClientRegistration(),
                 context.getPrincipal().getName(), tokenResponse.getAccessToken(), tokenResponse.getRefreshToken(), oidcIdToken);

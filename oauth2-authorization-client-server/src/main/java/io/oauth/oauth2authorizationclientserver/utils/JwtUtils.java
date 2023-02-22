@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.util.StringUtils;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.Map;
@@ -26,6 +27,19 @@ public class JwtUtils {
         } catch (JsonProcessingException e) {
             throw new RuntimeException("An error occurred during processing IdTokenStringValue to OidcIdToken", e);
         }
+    }
+
+    public static int calculateExpDuration(String jwtStringValue){
+
+        Map<String, Object> claims = getClaims(jwtStringValue);
+        Integer iat = (Integer) claims.get("iat");
+        Integer exp = (Integer) claims.get("exp");
+
+        if(iat == null || exp == null){
+            throw new RuntimeException("claim에 iat, exp가 없음.");
+        }
+
+        return exp - iat;
     }
 
     public static OidcIdToken convertTokenValueStringToOidcIdToken(String tokenValue){
