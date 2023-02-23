@@ -63,6 +63,17 @@
             user_id = #{userId}
     </update>
 
+    <insert id="insertUserRoles" parameterType="Map">
+        <foreach collection="roles" item="role" close=";">
+        INSERT INTO tb_user_role(
+            tb_role_id, tb_user_user_id
+        )
+        VALUES (
+            #{role.id}, #{userId}
+        )
+        </foreach>
+    </insert>
+
     <delete id="deleteByUserId">
         DELETE FROM tb_user
         WHERE user_id = #{userId}

@@ -1,5 +1,6 @@
 package io.oauth2.client.security.entrypoint;
 
+import io.oauth2.client.security.config.propertiesconfig.JwtProperties;
 import io.oauth2.client.security.model.CustomOAuth2AuthorizedClient;
 import io.oauth2.client.security.utils.CookieUtils;
 import io.oauth2.client.security.utils.JwtUtils;
@@ -13,6 +14,7 @@ import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.jwt.JwtValidationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -21,7 +23,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Map;
 
@@ -31,10 +32,12 @@ public class OAuth2LoginAuthenticationEntrypoint implements AuthenticationEntryP
 
     private final OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
     private final OAuth2AuthorizedClientManager oauth2AuthorizedClientManager;
+    private final JwtProperties jwtProperties;
 
-    public OAuth2LoginAuthenticationEntrypoint(OAuth2AuthorizedClientService oAuth2AuthorizedClientService, OAuth2AuthorizedClientManager oauth2AuthorizedClientManager) {
+    public OAuth2LoginAuthenticationEntrypoint(OAuth2AuthorizedClientService oAuth2AuthorizedClientService, OAuth2AuthorizedClientManager oauth2AuthorizedClientManager, JwtProperties jwtProperties) {
         this.oAuth2AuthorizedClientService = oAuth2AuthorizedClientService;
         this.oauth2AuthorizedClientManager = oauth2AuthorizedClientManager;
+        this.jwtProperties = jwtProperties;
     }
 
     @Override
@@ -55,14 +58,17 @@ public class OAuth2LoginAuthenticationEntrypoint implements AuthenticationEntryP
         String idToken = null;
         String regId = null;
 
-        for (Cookie cookie : cookies) {
+        String idTokenCookieName = jwtProperties.getIdTokenCookieName();
+        String regIdCookieName = jwtProperties.getRegIdCookieName();
+        int cookieMaxAge = jwtProperties.getCookieMaxAge();
 
-            if(cookie.getName().equals("reg")){
+
+        for (Cookie cookie : cookies) {
+            if(cookie.getName().equals(regIdCookieName)){
                 regId = cookie.getValue();
-            }else if(cookie.getName().equals("idt")){
+            }else if(cookie.getName().equals(idTokenCookieName)){
                 idToken = cookie.getValue();
             }
-
         }
 
         if(!StringUtils.hasText(regId) || !StringUtils.hasText(idToken)){
@@ -81,6 +87,7 @@ public class OAuth2LoginAuthenticationEntrypoint implements AuthenticationEntryP
 
         OAuth2AuthorizedClient authorizedClient
                 = oAuth2AuthorizedClientService.loadAuthorizedClient(regId, (String) claims.get("sub"));
+
 
         ClientRegistration clientRegistration = ClientRegistration.withClientRegistration(authorizedClient.getClientRegistration())
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
@@ -102,22 +109,12 @@ public class OAuth2LoginAuthenticationEntrypoint implements AuthenticationEntryP
         CustomOAuth2AuthorizedClient reAuthorizedClient = (CustomOAuth2AuthorizedClient)authorize;
 
         OidcIdToken refreshedIdToken = reAuthorizedClient.getIdToken();
-        addCookie("o_id", refreshedIdToken.getTokenValue(), response);
+
+        CookieUtils.addCookie(response, idTokenCookieName, refreshedIdToken.getTokenValue(), cookieMaxAge);
 
         regId = reAuthorizedClient.getClientRegistration().getRegistrationId();
-        addCookie("r_id", Base64.getEncoder().encodeToString(regId.getBytes()), response);
-
+        CookieUtils.addCookie(response, regIdCookieName, Base64.getEncoder().encodeToString(regId.getBytes()), cookieMaxAge);
 
         response.sendRedirect("/");
     }
-
-    private void addCookie(String key, String value, HttpServletResponse response){
-        Cookie cookie = new Cookie(key, value);
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(60*60*24);
-        cookie.setPath("/");
-
-        response.addCookie(cookie);
-    }
-
 }

@@ -39,10 +39,12 @@ public class CustomOAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSucc
         String encodedRegId = Base64.getEncoder()
                 .encodeToString(authenticationToken.getAuthorizedClientRegistrationId().getBytes());
 
+        String idTokenCookieName = jwtProperties.getIdTokenCookieName();
+        String regIdCookieName = jwtProperties.getRegIdCookieName();
+        int cookieMaxAge = jwtProperties.getCookieMaxAge();
 
-
-        CookieUtils.addCookie(response, "idt", idToken.getTokenValue(), jwtProperties.getCookieMaxAge()*60);
-        CookieUtils.addCookie(response, "reg", encodedRegId, jwtProperties.getCookieMaxAge()*60);
+        CookieUtils.addCookie(response, idTokenCookieName, idToken.getTokenValue(), cookieMaxAge);
+        CookieUtils.addCookie(response, regIdCookieName, encodedRegId, cookieMaxAge);
 
 
         this.getRedirectStrategy().sendRedirect(request, response, "/");

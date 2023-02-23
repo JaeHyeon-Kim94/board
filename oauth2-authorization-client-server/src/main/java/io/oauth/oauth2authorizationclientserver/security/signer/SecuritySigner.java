@@ -66,7 +66,7 @@ public abstract class SecuritySigner {
         List<String> authorities = principal.getAuthorities().stream().map(auth -> auth.getAuthority()).collect(Collectors.toList());
 
         return new JWTClaimsSet.Builder()
-                .subject(user.getName())
+                .subject(principal.getName())
                 .issuer(issuer)
                 .audience(audience)
                 .claim("username",principal.getUsername())

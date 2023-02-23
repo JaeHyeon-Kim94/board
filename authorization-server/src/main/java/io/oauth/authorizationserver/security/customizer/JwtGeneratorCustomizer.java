@@ -99,6 +99,7 @@ public class JwtGeneratorCustomizer implements OAuth2TokenCustomizer<JwtEncoding
                 .subject(String.valueOf(principal.getUserId()))
                 .audience(Collections.singletonList(clientId))
                 .issuedAt(now)
+                .expiresAt(now.plus(exp, ChronoUnit.MINUTES))
                 .notBefore(now)
                 .claims(claim -> {
                     claim.put("nickname", principal.getNickname());

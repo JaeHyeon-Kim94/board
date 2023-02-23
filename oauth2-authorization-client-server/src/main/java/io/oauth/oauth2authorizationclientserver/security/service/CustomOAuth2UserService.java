@@ -5,6 +5,7 @@ import io.oauth.oauth2authorizationclientserver.security.common.JwtGenerator;
 import io.oauth.oauth2authorizationclientserver.security.model.PrincipalDetails;
 import io.oauth.oauth2authorizationclientserver.security.repository.user.UserRepository;
 import io.oauth.oauth2authorizationclientserver.utils.UserResolover;
+import io.oauth.oauth2authorizationclientserver.web.domain.Role;
 import io.oauth.oauth2authorizationclientserver.web.domain.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -83,19 +84,19 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         User foundUser = userRepository
                 .findByUserId(user.getUserId());
 
-        if(foundUser == null){
-            userRepository.insert(user);
-        } else {
-            user.setRoles(foundUser.getRoles());
-            if(!foundUser.equals(user)){
-                userRepository.update(user);
-            }
-        }
+        Set<Role> roles = foundUser == null ? Set.of(Role.getDefaultUserRole()) : foundUser.getRoles();
+        user.setRoles(roles);
 
         //Authentication Token에 담길 principal
         PrincipalDetails principalDetails = null;
         //Token 발급(Id, Access, Refresh)
         principalDetails = setTokenToUser(userAttributes, registrationId, user);
+
+        if(foundUser == null){
+            userRepository.insert(user);
+        } else {
+            userRepository.update(user);
+        }
 
         /**
          * 이 인증객체를 이용하여 요청한 Client에게 Token을 발급함.

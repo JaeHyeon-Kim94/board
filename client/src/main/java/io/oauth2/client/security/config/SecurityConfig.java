@@ -95,7 +95,6 @@ public class SecurityConfig {
                 .logout(logoutConfigurer -> logoutConfigurer
                         .logoutUrl("/logout")
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout", HttpMethod.GET.name()))
-                        //.deleteCookies("o_id", "r_id")
                         .logoutSuccessUrl("/")
                         .addLogoutHandler(jwtLogoutHandler)
                 );

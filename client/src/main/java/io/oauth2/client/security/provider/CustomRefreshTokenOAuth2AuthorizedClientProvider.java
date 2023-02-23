@@ -1,5 +1,6 @@
 package io.oauth2.client.security.provider;
 
+import io.oauth2.client.security.converter.CustomOAuth2RefreshTokenGrantRequestEntityConverter;
 import io.oauth2.client.security.model.CustomOAuth2AuthorizedClient;
 import io.oauth2.client.security.utils.JwtUtils;
 import org.springframework.lang.Nullable;
@@ -17,8 +18,7 @@ import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames;
 import org.springframework.util.Assert;
 
-import java.time.Clock;
-import java.time.Duration;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -28,9 +28,7 @@ public class CustomRefreshTokenOAuth2AuthorizedClientProvider implements OAuth2A
 
     private OAuth2AccessTokenResponseClient<OAuth2RefreshTokenGrantRequest> accessTokenResponseClient = new DefaultRefreshTokenTokenResponseClient();
 
-    private Duration clockSkew = Duration.ofSeconds(60);
-
-    private Clock clock = Clock.systemUTC();
+    private CustomOAuth2RefreshTokenGrantRequestEntityConverter converter = new CustomOAuth2RefreshTokenGrantRequestEntityConverter();
 
     @Override
     @Nullable
@@ -52,7 +50,7 @@ public class CustomRefreshTokenOAuth2AuthorizedClientProvider implements OAuth2A
                 authorizedClient.getClientRegistration(), authorizedClient.getAccessToken(),
                 authorizedClient.getRefreshToken(), scopes);
 
-
+        ((DefaultRefreshTokenTokenResponseClient)accessTokenResponseClient).setRequestEntityConverter(converter);
 
         OAuth2AccessTokenResponse tokenResponse = getTokenResponse(authorizedClient, refreshTokenGrantRequest);
 
@@ -74,23 +72,12 @@ public class CustomRefreshTokenOAuth2AuthorizedClientProvider implements OAuth2A
     }
 
     private boolean hasTokenExpired(OAuth2Token token) {
-        return this.clock.instant().isAfter(token.getExpiresAt().minus(this.clockSkew));
+        return token.getExpiresAt().isBefore(Instant.now());
     }
 
     public void setAccessTokenResponseClient(
             OAuth2AccessTokenResponseClient<OAuth2RefreshTokenGrantRequest> accessTokenResponseClient) {
         Assert.notNull(accessTokenResponseClient, "accessTokenResponseClient cannot be null");
         this.accessTokenResponseClient = accessTokenResponseClient;
-    }
-
-    public void setClockSkew(Duration clockSkew) {
-        Assert.notNull(clockSkew, "clockSkew cannot be null");
-        Assert.isTrue(clockSkew.getSeconds() >= 0, "clockSkew must be >= 0");
-        this.clockSkew = clockSkew;
-    }
-
-    public void setClock(Clock clock) {
-        Assert.notNull(clock, "clock cannot be null");
-        this.clock = clock;
     }
 }

@@ -67,9 +67,12 @@ public class SocialLoginTokenResponseProcessingFilter extends OncePerRequestFilt
         //1
         String idTokenStringValue       = request.getParameter("id-token");
 
+        String idTokenCookieName = jwtProperties.getIdTokenCookieName();
+        String regIdCookieName = jwtProperties.getRegIdCookieName();
         int cookieMaxAge = jwtProperties.getCookieMaxAge();
-        CookieUtils.addCookie(response, "idt", idTokenStringValue, cookieMaxAge * 60);
-        CookieUtils.addCookie(response, "reg", encodedRegId, cookieMaxAge * 60);
+
+        CookieUtils.addCookie(response, idTokenCookieName, idTokenStringValue, cookieMaxAge);
+        CookieUtils.addCookie(response, regIdCookieName, encodedRegId, cookieMaxAge);
 
         String accessTokenStringValue   = request.getParameter("access-token");
         String refreshTokenStringValue  = request.getParameter("refresh-token");
@@ -84,7 +87,7 @@ public class SocialLoginTokenResponseProcessingFilter extends OncePerRequestFilt
 
         ClientRegistration clientRegistration = ClientRegistration.withRegistrationId(registrationId)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .clientId("tmp").redirectUri("tmp").tokenUri("tmp").authorizationUri("tmp")
+                .clientId("none").redirectUri("none").tokenUri("none").authorizationUri("none")
                 .issuerUri("http://127.0.0.1:9001")
                 .jwkSetUri("http://127.0.0.1:9001/oauth2/jwks")
                 .build();

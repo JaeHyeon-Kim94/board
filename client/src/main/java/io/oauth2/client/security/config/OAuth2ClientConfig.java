@@ -1,10 +1,8 @@
 package io.oauth2.client.security.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.oauth2.client.security.common.CustomAuthorityMapper;
 import io.oauth2.client.security.config.propertiesconfig.JwtProperties;
 import io.oauth2.client.security.entrypoint.OAuth2LoginAuthenticationEntrypoint;
-import io.oauth2.client.security.handler.CustomOAuth2LoginSuccessHandler;
 import io.oauth2.client.security.provider.CustomRefreshTokenOAuth2AuthorizedClientProvider;
 import io.oauth2.client.security.repository.HttpCookieOAuth2AuthorizationRequestRepository;
 import io.oauth2.client.security.resolver.CustomeBearerTokenResolver;
@@ -14,20 +12,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.authentication.AuthenticationManagerResolver;
 import org.springframework.security.oauth2.client.*;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.*;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.oauth2.server.resource.authentication.JwtIssuerAuthenticationManagerResolver;
 
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
-import java.util.UUID;
-import java.util.function.Consumer;
 
 @Configuration
 public class OAuth2ClientConfig {
@@ -51,6 +43,7 @@ public class OAuth2ClientConfig {
                 = new DefaultOAuth2AuthorizedClientManager(clientRegistrationRepository, auth2AuthorizedClientRepository);
 
         defaultOAuth2AuthorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider);
+
         defaultOAuth2AuthorizedClientManager.setAuthorizationSuccessHandler((authorizedClient, principal, attributes) -> {
             auth2AuthorizedClientRepository
                     .saveAuthorizedClient(authorizedClient, principal,
@@ -92,7 +85,7 @@ public class OAuth2ClientConfig {
 
     @Bean
     public OAuth2LoginAuthenticationEntrypoint oAuth2LoginAuthenticationEntrypoint(OAuth2AuthorizedClientService clientService, OAuth2AuthorizedClientManager oAuth2AuthorizedClientManager) {
-        return new OAuth2LoginAuthenticationEntrypoint(clientService, oAuth2AuthorizedClientManager);
+        return new OAuth2LoginAuthenticationEntrypoint(clientService, oAuth2AuthorizedClientManager, jwtProperties);
     }
 
     @Bean
@@ -102,7 +95,7 @@ public class OAuth2ClientConfig {
 
     @Bean
     public CustomeBearerTokenResolver customeBearerTokenResolver(OAuth2AuthorizedClientService oAuth2AuthorizedClientService){
-        return new CustomeBearerTokenResolver(oAuth2AuthorizedClientService);
+        return new CustomeBearerTokenResolver(jwtProperties, oAuth2AuthorizedClientService);
     }
 
 }

@@ -15,4 +15,6 @@ custom:
     trusted-issuerUri:
       - http://127.0.0.1:9000
       - http://127.0.0.1:9001
-    cookie-max-age: 10
+    cookie-max-age: 86400 #seconds
+    id-token-cookie-name: idt
+    reg-id-cookie-name: reg

@@ -10,6 +10,9 @@ import java.util.List;
 @ConfigurationProperties(prefix = "custom.jwt")
 public class JwtProperties{
     private List<String> trustedIssuerUri = new ArrayList<>();
+    int cookieMaxAge;
+    private String idTokenCookieName;
+    private String regIdCookieName;
 
     public List<String> getTrustedIssuerUri() {
         return trustedIssuerUri;
@@ -19,13 +22,27 @@ public class JwtProperties{
         this.trustedIssuerUri = trustedIssuerUri;
     }
 
-    int cookieMaxAge;
-
     public int getCookieMaxAge() {
         return cookieMaxAge;
     }
 
     public void setCookieMaxAge(int cookieMaxAge) {
         this.cookieMaxAge = cookieMaxAge;
+    }
+
+    public String getIdTokenCookieName() {
+        return idTokenCookieName;
+    }
+
+    public void setIdTokenCookieName(String idTokenCookieName) {
+        this.idTokenCookieName = idTokenCookieName;
+    }
+
+    public String getRegIdCookieName() {
+        return regIdCookieName;
+    }
+
+    public void setRegIdCookieName(String regIdCookieName) {
+        this.regIdCookieName = regIdCookieName;
     }
 }

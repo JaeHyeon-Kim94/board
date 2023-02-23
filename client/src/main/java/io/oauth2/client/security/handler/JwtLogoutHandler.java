@@ -1,5 +1,6 @@
 package io.oauth2.client.security.handler;
 
+import io.oauth2.client.security.config.propertiesconfig.JwtProperties;
 import io.oauth2.client.security.utils.CookieUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -15,6 +16,11 @@ import java.util.Optional;
 @Component
 public class JwtLogoutHandler implements LogoutHandler {
 
+    private final JwtProperties jwtProperties;
+
+    public JwtLogoutHandler(JwtProperties jwtProperties) {
+        this.jwtProperties = jwtProperties;
+    }
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
@@ -30,8 +36,8 @@ public class JwtLogoutHandler implements LogoutHandler {
             }
         }
 
-        Optional<Cookie> idt = CookieUtils.getCookie(request, "idt");
-        Optional<Cookie> rId = CookieUtils.getCookie(request, "r_id");
+        Optional<Cookie> idt = CookieUtils.getCookie(request, jwtProperties.getIdTokenCookieName());
+        Optional<Cookie> rId = CookieUtils.getCookie(request, jwtProperties.getRegIdCookieName());
 
         idt.ifPresent(cookie -> CookieUtils.deleteCookie(request, response, cookie.getName()));
         rId.ifPresent(cookie -> CookieUtils.deleteCookie(request, response, cookie.getName()));

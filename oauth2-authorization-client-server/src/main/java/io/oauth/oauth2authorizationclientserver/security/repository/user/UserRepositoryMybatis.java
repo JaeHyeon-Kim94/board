@@ -21,7 +21,8 @@ public class UserRepositoryMybatis implements UserRepository {
     @Override
     public User insert(User user) {
         Role defaultUserRole = Role.getDefaultUserRole();
-        user.getRoles().add(defaultUserRole);
+        Set<Role> roles = Set.of(defaultUserRole);
+        user.setRoles(roles);
         userMapper.insert(user, defaultUserRole.getId());
         return user;
     }
@@ -29,6 +30,11 @@ public class UserRepositoryMybatis implements UserRepository {
     @Override
     public void update(User user) {
         userMapper.update(user);
+    }
+
+    @Override
+    public void updateUserRoles(Set<Role> roles, String userId) {
+        userMapper.insertUserRoles(roles, userId);
     }
 
     @Override

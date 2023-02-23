@@ -1,5 +1,6 @@
 package io.oauth2.client.security.resolver;
 
+import io.oauth2.client.security.config.propertiesconfig.JwtProperties;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.server.resource.BearerTokenError;
@@ -15,13 +16,14 @@ public class CustomeBearerTokenResolver implements BearerTokenResolver {
 
     private static final Pattern authorizationPattern = Pattern.compile("^Bearer (?<token>[a-zA-Z0-9-._~+/]+=*)$",
             Pattern.CASE_INSENSITIVE);
-
     private static final String REDIRECT_ATTRIBUTE_FLASH_MAP = "org.springframework.web.servlet.DispatcherServlet.INPUT_FLASH_MAP";
+    private final JwtProperties jwtProperties;
 
 
     private final OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
 
-    public CustomeBearerTokenResolver(OAuth2AuthorizedClientService oAuth2AuthorizedClientService) {
+    public CustomeBearerTokenResolver(JwtProperties jwtProperties, OAuth2AuthorizedClientService oAuth2AuthorizedClientService) {
+        this.jwtProperties = jwtProperties;
         this.oAuth2AuthorizedClientService = oAuth2AuthorizedClientService;
     }
     @Override
@@ -34,7 +36,7 @@ public class CustomeBearerTokenResolver implements BearerTokenResolver {
         if(cookies == null) return null;
         String idTokenValue = null;
         for (Cookie cookie : cookies) {
-            if(cookie.getName().equals("idt")){
+            if(cookie.getName().equals(jwtProperties.getIdTokenCookieName())){
                 idTokenValue = cookie.getValue();
             }
         }
