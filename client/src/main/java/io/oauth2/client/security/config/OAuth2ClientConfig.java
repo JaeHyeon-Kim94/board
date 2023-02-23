@@ -6,7 +6,7 @@ import io.oauth2.client.security.entrypoint.OAuth2LoginAuthenticationEntrypoint;
 import io.oauth2.client.security.provider.CustomRefreshTokenOAuth2AuthorizedClientProvider;
 import io.oauth2.client.security.repository.HttpCookieOAuth2AuthorizationRequestRepository;
 import io.oauth2.client.security.resolver.CustomeBearerTokenResolver;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,14 +21,11 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtIss
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+@RequiredArgsConstructor
 @Configuration
 public class OAuth2ClientConfig {
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    JwtProperties jwtProperties;
+    private final JdbcTemplate jdbcTemplate;
+    private final JwtProperties jwtProperties;
 
 
     @Bean

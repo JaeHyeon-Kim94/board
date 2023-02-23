@@ -56,7 +56,7 @@ public class CustomRefreshTokenOAuth2AuthorizedClientProvider implements OAuth2A
 
         String idToken = (String) tokenResponse.getAdditionalParameters().get("id_token");
         OidcIdToken oidcIdToken = JwtUtils.convertTokenValueStringToOAuth2Token(idToken, OidcParameterNames.ID_TOKEN);
-
+        context.getPrincipal().setAuthenticated(true);
         return new CustomOAuth2AuthorizedClient(context.getAuthorizedClient().getClientRegistration(),
                 context.getPrincipal().getName(), tokenResponse.getAccessToken(), tokenResponse.getRefreshToken(), oidcIdToken);
     }

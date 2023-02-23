@@ -3,6 +3,7 @@ package io.oauth.authorizationserver.security.config;
 import io.oauth.authorizationserver.repository.UserRepository;
 import io.oauth.authorizationserver.security.provider.FormUserAuthenticationProvider;
 import io.oauth.authorizationserver.security.service.CustomUserDetailsService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -17,10 +18,11 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import javax.servlet.http.HttpSession;
 
+@RequiredArgsConstructor
 @EnableWebSecurity
 public class DefaultSecurityConfig {
-    @Autowired
-    private ObjectFactory<HttpSession> httpSessionFactory;
+
+    private final ObjectFactory<HttpSession> httpSessionFactory;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer(){

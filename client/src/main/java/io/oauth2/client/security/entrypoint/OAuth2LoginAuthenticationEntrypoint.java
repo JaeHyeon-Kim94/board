@@ -104,7 +104,14 @@ public class OAuth2LoginAuthenticationEntrypoint implements AuthenticationEntryP
                 .attribute(HttpServletResponse.class.getName(), response)
                 .build();
 
-        OAuth2AuthorizedClient authorize = oauth2AuthorizedClientManager.authorize(oAuth2AuthorizeRequest);
+        OAuth2AuthorizedClient authorize = null;
+
+        try{
+            authorize = oauth2AuthorizedClientManager.authorize(oAuth2AuthorizeRequest);
+        } catch(Exception e){
+            response.sendRedirect("/login");
+        }
+
 
         CustomOAuth2AuthorizedClient reAuthorizedClient = (CustomOAuth2AuthorizedClient)authorize;
 

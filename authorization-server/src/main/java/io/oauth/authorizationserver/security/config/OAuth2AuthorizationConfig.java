@@ -1,5 +1,6 @@
 package io.oauth.authorizationserver.security.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -24,13 +25,13 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import javax.servlet.http.HttpServletResponse;
-
+@RequiredArgsConstructor
 @Configuration
 public class OAuth2AuthorizationConfig {
 
-    private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
-    @Autowired private JdbcTemplate jdbcTemplate;
-    @Autowired private OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator;
+    private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+    private final JdbcTemplate jdbcTemplate;
+    private final OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator;
 
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)

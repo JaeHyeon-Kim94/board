@@ -8,6 +8,7 @@ import io.oauth2.client.security.handler.JwtLogoutHandler;
 import io.oauth2.client.security.resolver.CustomeBearerTokenResolver;
 import io.oauth2.client.security.service.CustomOAuth2UserService;
 import io.oauth2.client.security.service.CustomOidcUserService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +26,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.servlet.http.HttpServletRequest;
 @Slf4j
+@RequiredArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
@@ -38,32 +40,13 @@ public class SecurityConfig {
     private final JwtLogoutHandler jwtLogoutHandler;
     private final SocialLoginTokenResponseProcessingFilter socialLoginTokenResponseProcessingFilter;
 
-    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, CustomOidcUserService customOidcUserService
-            , AuthenticationManagerResolver<HttpServletRequest> authenticationManagerResolver
-            , OAuth2LoginAuthenticationEntrypoint oAuth2LoginAuthenticationEntrypoint, CustomeBearerTokenResolver customeBearerTokenResolver
-            , CustomOAuth2LoginSuccessHandler customOAuth2LoginSuccessHandler, CustomAuthorityMapper customAuthorityMapper
-            , AuthorizationRequestRepository<OAuth2AuthorizationRequest> authorizationRequestRepository
-            , JwtLogoutHandler jwtLogoutHandler, SocialLoginTokenResponseProcessingFilter socialLoginTokenResponseProcessingFilter) {
-        this.customOAuth2UserService = customOAuth2UserService;
-        this.customOidcUserService = customOidcUserService;
-        this.authenticationManagerResolver = authenticationManagerResolver;
-        this.oAuth2LoginAuthenticationEntrypoint = oAuth2LoginAuthenticationEntrypoint;
-        this.customeBearerTokenResolver = customeBearerTokenResolver;
-        this.customOAuth2LoginSuccessHandler = customOAuth2LoginSuccessHandler;
-        this.customAuthorityMapper = customAuthorityMapper;
-        this.authorizationRequestRepository = authorizationRequestRepository;
-        this.jwtLogoutHandler = jwtLogoutHandler;
-        this.socialLoginTokenResponseProcessingFilter = socialLoginTokenResponseProcessingFilter;
-    }
-
-
     @Bean
     public SecurityFilterChain oauth2ClientSecurityFilterChain(HttpSecurity http) throws Exception {
 
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/", "/login*", "/oauth/login/*", "/token").permitAll()
+                .antMatchers("/", "/login*", "/oauth/login/*", "/token", "/error").permitAll()
                 .anyRequest().authenticated();
 
 

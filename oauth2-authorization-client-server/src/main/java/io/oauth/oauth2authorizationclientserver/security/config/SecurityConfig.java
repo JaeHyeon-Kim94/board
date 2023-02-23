@@ -1,5 +1,6 @@
 package io.oauth.oauth2authorizationclientserver.security.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,10 +16,11 @@ import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepo
 
 import javax.sql.DataSource;
 
+@RequiredArgsConstructor
 @Configuration
 public class SecurityConfig {
 
-    @Autowired ClientRegistrationRepository clientRegistrationRepository;
+    private final ClientRegistrationRepository clientRegistrationRepository;
 
     @Bean
     public OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository(){

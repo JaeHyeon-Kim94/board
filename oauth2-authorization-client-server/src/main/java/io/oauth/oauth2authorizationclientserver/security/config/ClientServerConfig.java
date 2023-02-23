@@ -3,6 +3,7 @@ package io.oauth.oauth2authorizationclientserver.security.config;
 import io.oauth.oauth2authorizationclientserver.security.common.CustomAuthorityMapper;
 import io.oauth.oauth2authorizationclientserver.security.handler.SuccessfulAuthenticationJwtResponseHandler;
 import io.oauth.oauth2authorizationclientserver.security.service.CustomOAuth2UserService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,21 +22,17 @@ import org.springframework.security.oauth2.core.OAuth2AuthorizationServerMetadat
 import org.springframework.security.web.SecurityFilterChain;
 
 @Slf4j
+@RequiredArgsConstructor
 @EnableWebSecurity
 public class ClientServerConfig {
-
-
     @Value("${token.audience}")
     private String audience;
-
-    @Autowired private CustomOAuth2UserService customOAuthUserService;
-    @Autowired private OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
-    @Autowired private OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository;
-    @Autowired private ClientRegistrationRepository clientRegistrationRepository;
-
-    @Autowired private SuccessfulAuthenticationJwtResponseHandler successfulAuthenticationJwtResponseHandler;
-
-    @Autowired private CustomAuthorityMapper customAuthorityMapper;
+    private final CustomOAuth2UserService customOAuthUserService;
+    private final OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
+    private final OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository;
+    private final ClientRegistrationRepository clientRegistrationRepository;
+    private final SuccessfulAuthenticationJwtResponseHandler successfulAuthenticationJwtResponseHandler;
+    private final CustomAuthorityMapper customAuthorityMapper;
 
     @Bean
     public SecurityFilterChain clientServerSecurityFilterChain(HttpSecurity http) throws Exception {

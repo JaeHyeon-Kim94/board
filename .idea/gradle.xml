@@ -33,6 +33,16 @@
           </set>
         </option>
       </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/resource-server-role-resource" />
+        <option name="gradleJvm" value="#JAVA_HOME" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/resource-server-role-resource" />
+          </set>
+        </option>
+      </GradleProjectSettings>
     </option>
   </component>
 </project>

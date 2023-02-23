@@ -8,5 +8,5 @@ spring:
     basename: messages, errors
 
 token:
-  exp: 5
+  exp: 15
   refresh-exp: 20080

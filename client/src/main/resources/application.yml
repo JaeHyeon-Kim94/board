@@ -2,13 +2,9 @@ server:
   port: 8081
 
 spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/oauth?serverTimezone=Asia/Seoul
-    username: oauth
-    password: 1234
   profiles:
-    include: oauth2
+    include: oauth2, data
+
 
 custom:
   jwt:

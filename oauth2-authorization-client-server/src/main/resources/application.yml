@@ -2,20 +2,8 @@ server:
   port: 9001
 
 spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/oauth?serverTimezone=Asia/Seoul&allowMultiQueries=true
-    username: oauth
-    password: 1234
   profiles:
-    include: oauth2
-
-mybatis:
-  type-aliases-package: io.oauth.oauth2authorizationclientserver.web.domain
-  configuration:
-    map-underscore-to-camel-case: true
-  mapper-locations: classpath:mapper/**/*.xml
-
+    include: oauth2, data
 
 authorization-server:
   jwks-uri: http://127.0.0.1:9001/oauth2/jwks
@@ -24,7 +12,7 @@ authorization-server:
 token:
   issuer: http://127.0.0.1:9001
   audience: http://127.0.0.1:8081
-  exp: 5
+  exp: 15
   refresh:
     exp: 20040
 
