@@ -32,4 +32,24 @@ public class ResourceService {
 
         return resources;
     }
+
+    public Resource addResource(Resource resource, String roleId){
+        return resourceRepository.addRole(resource, roleId);
+    }
+
+    public int updateResource(Resource resource, String roleId) {
+        return resourceRepository.updateRole(resource, roleId);
+    }
+
+    public int deleteResource(String resourceId) {
+        return resourceRepository.deleteResource(resourceId);
+    }
+
+    public List<Resource> findAll(){
+        return resourceRepository.findAll();
+    }
+
+    public Resource findById(String resourceId){
+        return resourceRepository.findById(resourceId);
+    }
 }

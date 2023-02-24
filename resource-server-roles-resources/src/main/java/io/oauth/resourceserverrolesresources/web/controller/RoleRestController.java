@@ -1,29 +1,28 @@
 package io.oauth.resourceserverrolesresources.web.controller;
 
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.oauth.resourceserverrolesresources.service.RoleService;
 import io.oauth.resourceserverrolesresources.web.domain.Role;
+import io.oauth.resourceserverrolesresources.web.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+
+import static io.oauth.resourceserverrolesresources.web.utils.ApiUtils.*;
 
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("api/roles")
+@RequestMapping("/api/roles")
 public class RoleRestController {
 
+    private static final String DEFAULT_PATH = "/api/roles/";
     private final RoleService roleService;
     private final ObjectMapper objectMapper;
 
@@ -32,10 +31,7 @@ public class RoleRestController {
         Role roleForAdd = objectMapper.readValue(role, Role.class);
         roleService.addRole(roleForAdd, parentId);
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setLocation(new URI("/api/roles/"+roleForAdd.getId()));
-
-        return new ResponseEntity<>(null, httpHeaders, HttpStatus.ACCEPTED);
+        return successCreated(DEFAULT_PATH+roleForAdd.getId());
     }
 
     @PutMapping
@@ -45,7 +41,7 @@ public class RoleRestController {
 
         roleService.updateRole(roleForUpdate, id);
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return successNoContent();
     }
 
     @PostMapping("/{roleId}/user/{userId}")
@@ -53,7 +49,7 @@ public class RoleRestController {
 
         roleService.addRoleOfUser(roleId, userId);
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return successNoContent();
     }
 
     @PutMapping("/{roleId}/user/{userId}")
@@ -61,22 +57,22 @@ public class RoleRestController {
 
         roleService.updateRoleOfUser(roleId, userId);
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return successNoContent();
     }
 
     @GetMapping
     public ResponseEntity<String> getRoles() throws JsonProcessingException {
-        List<Role> roles = roleService.getRoles();
+        List<Role> roles = roleService.findAll();
 
-        String s = objectMapper.writeValueAsString(roles);
+        String result = objectMapper.writeValueAsString(roles);
 
-        return new ResponseEntity(s, HttpStatus.OK);
+        return successOk(result, MediaType.APPLICATION_JSON);
     }
 
     @DeleteMapping("/{roleId}")
-    public ResponseEntity deleteRole(@PathVariable String roleId){
+    public ResponseEntity<Void> deleteRole(@PathVariable String roleId){
         roleService.deleteRole(roleId);
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return successNoContent();
     }
 }

@@ -65,6 +65,7 @@ CREATE TABLE IF NOT EXISTS  `tb_resource`
     PRIMARY KEY (`id`),
     INDEX `idx_resource_level` (`resource_level` DESC),
     INDEX `idx_fk_tb_resource_tb_role_id` (`tb_role_id` ASC),
+    UNIQUE INDEX `tb_resource_level` (`resource_level` DESC),
     FOREIGN KEY (`tb_role_id`)
         REFERENCES `tb_role` (`id`)
         ON DELETE RESTRICT
