@@ -1,11 +1,9 @@
 package io.oauth.oauth2authorizationclientserver.security.filter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.JOSEException;
 import io.oauth.oauth2authorizationclientserver.security.common.JwtGenerator;
-import io.oauth.oauth2authorizationclientserver.security.handler.SuccessfulAuthenticationJwtResponseHandler;
 import io.oauth.oauth2authorizationclientserver.security.model.PrincipalDetails;
-import io.oauth.oauth2authorizationclientserver.security.repository.user.UserRepository;
+import io.oauth.oauth2authorizationclientserver.repository.user.UserRepository;
 import io.oauth.oauth2authorizationclientserver.web.domain.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;

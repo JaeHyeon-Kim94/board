@@ -5,7 +5,7 @@
     <file type="web" url="file://$PROJECT_DIR$/authorization-server" />
     <file type="web" url="file://$PROJECT_DIR$/client" />
     <file type="web" url="file://$PROJECT_DIR$/oauth2-authorization-client-server" />
-    <file type="web" url="file://$PROJECT_DIR$/resource-server-role-resource" />
+    <file type="web" url="file://$PROJECT_DIR$/resource-server-board" />
   </component>
   <component name="PWA">
     <option name="wasEnabledAtLeastOnce" value="true" />

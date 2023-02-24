@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS  `tb_resource`
     `resource_level`        VARCHAR(50)     NOT NULL,
     `tb_role_id`            VARCHAR(100)    NOT NULL,
     `resource_value`        VARCHAR(200)    NOT NULL,
-    `resource_http_method`  VARCHAR(45)     NOT NULL,
+    `resource_http_method`  VARCHAR(45)     NULL,
     PRIMARY KEY (`id`),
     INDEX `idx_resource_level` (`resource_level` DESC),
     INDEX `idx_fk_tb_resource_tb_role_id` (`tb_role_id` ASC),
