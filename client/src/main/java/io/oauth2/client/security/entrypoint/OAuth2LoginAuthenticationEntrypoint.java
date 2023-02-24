@@ -108,10 +108,18 @@ public class OAuth2LoginAuthenticationEntrypoint implements AuthenticationEntryP
 
         try{
             authorize = oauth2AuthorizedClientManager.authorize(oAuth2AuthorizeRequest);
-        } catch(Exception e){
+        } catch (Exception ex){
+            CookieUtils.deleteCookies(request, response);
             response.sendRedirect("/login");
+            return;
         }
 
+
+        if(authorize == null){
+            CookieUtils.deleteCookies(request, response);
+            response.sendRedirect("/login");
+            return;
+        }
 
         CustomOAuth2AuthorizedClient reAuthorizedClient = (CustomOAuth2AuthorizedClient)authorize;
 

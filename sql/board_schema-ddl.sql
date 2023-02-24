@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS tb_role
 
     PRIMARY KEY (`id`),
     INDEX `idx_fk_tb_role_tb_role_parent_id` (`parent_id` ASC),
+    INDEX `idx_role_name` (`role_name` ASC),
     CONSTRAINT `fk_tb_role_tb_role_id`
         FOREIGN KEY (`parent_id`)
             REFERENCES  `tb_role` (`id`)

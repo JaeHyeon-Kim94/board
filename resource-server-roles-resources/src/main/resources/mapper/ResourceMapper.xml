@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.oauth.resourceserverrolesresources.repository.impl.mapper.ResourceMapper">
+
+    <resultMap id="resourceWithRole" type="Resource">
+        <id property="id"       column="id"/>
+        <result property="type" column="resource_type"/>
+        <result property="level" column="resource_level"/>
+        <result property="value" column="resource_value"/>
+        <result property="httpMethod" column="resource_http_method"/>
+        <association property="role" javaType="Role">
+            <id property="id" column="id"/>
+            <result property="description" column="role_desc"/>
+            <result property="name"         column="role_name"/>
+        </association>
+    </resultMap>
+
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Map">
+        INSERT INTO tb_resource(
+            resource_type, resource_level, tb_role_id, resource_value, resource_http_method
+        )
+        VALUES(
+            #{resource.type}, #{resource.level}, #{roleId}, #{resource.value}, #{resource.httpMethod}
+        )
+    </insert>
+
+    <update id="update" parameterType="Resource">
+        UPDATE tb_resource
+        SET
+                #{resource.type},
+                #{resource.level},
+                #{roleId},
+                #{resource.value},
+                #{resource.httpMethod}
+        WHERE
+                id = #{resource.id}
+    </update>
+
+    <delete id="delete">
+        DELETE tb_resource
+        WHERE id = #{id}
+    </delete>
+
+    <sql id="selectResourceWithRoleSql">
+        SELECT
+        re.id,              re.resource_type,       re.resource_level,
+        re.tb_role_id,      re.resource_value,      re.resource_http_method,
+        ro.id,              ro.role_desc,           ro.role_name
+
+        FROM tb_resource AS re
+        INNER JOIN tb_role AS ro ON re.tb_role_id = ro.id
+    </sql>
+
+    <select id="findById" resultMap="resourceWithRole">
+        <include refid="selectResourceWithRoleSql"/>
+        WHERE re.id = #{id}
+    </select>
+
+    <select id="findAll" resultMap="resourceWithRole">
+        <include refid="selectResourceWithRoleSql"/>
+        ORDER BY re.resource_level DESC
+    </select>
+
+</mapper>

@@ -4,10 +4,12 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/authorization-server.main.iml" filepath="$PROJECT_DIR$/.idea/modules/authorization-server.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/board.iml" filepath="$PROJECT_DIR$/board.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/board.resource-server-roles-resources.main.iml" filepath="$PROJECT_DIR$/.idea/modules/board.resource-server-roles-resources.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/client.main.iml" filepath="$PROJECT_DIR$/.idea/modules/client.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/io.oauth.resource-server-board.main.iml" filepath="$PROJECT_DIR$/.idea/modules/io.oauth.resource-server-board.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/io.oauth.resource-server-roles-resources.main.iml" filepath="$PROJECT_DIR$/.idea/modules/io.oauth.resource-server-roles-resources.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/oauth2-authorization-client-server.main.iml" filepath="$PROJECT_DIR$/.idea/modules/oauth2-authorization-client-server.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/resource-server-board.main.iml" filepath="$PROJECT_DIR$/.idea/modules/resource-server-board.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/resource-server-roles-resources.main.iml" filepath="$PROJECT_DIR$/.idea/modules/resource-server-roles-resources.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/spring.board.resource-server-roles-resources.main.iml" filepath="$PROJECT_DIR$/.idea/modules/spring.board.resource-server-roles-resources.main.iml" />
     </modules>
   </component>
 </project>

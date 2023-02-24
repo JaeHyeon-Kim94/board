@@ -70,7 +70,7 @@ public class OAuth2RefreshTokenProcessingFilter extends OncePerRequestFilter {
 
             if(user == null || !user.getRefreshTokenValue().equals(refreshTokenValue)
                             || user.getRefreshTokenIssuedAt().plus(refreshExpTerm, ChronoUnit.MINUTES).isBefore(LocalDateTime.now())){
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Refresh Token Expired or does not match");
                 return;
             }
 
