@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.oauth.resourceserverrolesresources.repository.impl.mapper.UserMapper">
+    <resultMap id="userWithRolesResultMap"        type="User">
+        <id property="userId"                           column="user_id"/>
+        <id property="providerId"                       column="provider_id"/>
+        <result property="fullname"                     column="fullname"/>
+        <result property="nickname"                     column="nickname"/>
+        <result property="phone"                        column="phone"/>
+        <result property="email"                        column="email"/>
+        <result property="birth"                        column="birth"/>
+        <result property="regDate"                      column="reg_date"/>
+        <result property="modDate"                      column="mod_date"/>
+        <collection property="roles"              ofType="Role">
+            <id property="id"                           column="id"/>
+            <result property="description"              column="role_desc"/>
+            <result property="name"                     column="role_name"/>
+        </collection>
+    </resultMap>
+
+    <sql id="joinUserWithRoleRelationshipTable">
+        FROM
+        tb_user AS u
+        INNER JOIN
+        tb_user_role AS ur ON u.user_id = ur.tb_user_user_id
+        INNER JOIN
+        tb_role AS r
+        ON r.id = ur.tb_role_id
+    </sql>
+
+    <select id="findByUserId" resultMap="userWithRolesResultMap">
+        SELECT
+        u.user_id,      u.provider_id,          u.fullname,
+        u.nickname,     u.phone,                u.email,
+        u.birth,        u.reg_date,             u.mod_date,
+        r.id,           r.role_desc,            r.role_name
+        <include refid="joinUserWithRoleRelationshipTable"/>
+        WHERE u.user_id = #{userId}
+    </select>
+
+    <select id="findAll" resultMap="userWithRolesResultMap">
+        SELECT
+        u.user_id,      u.fullname,     u.nickname,
+        r.role_name
+        <include refid="joinUserWithRoleRelationshipTable"/>
+    </select>
+</mapper>

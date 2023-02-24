@@ -1,4 +1,4 @@
-package io.oauth2.client;
+package io.oauth2.client.web.controller;
 
 import io.oauth2.client.security.utils.CookieUtils;
 import lombok.extern.slf4j.Slf4j;

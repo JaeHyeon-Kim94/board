@@ -21,6 +21,7 @@ import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -28,6 +29,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -54,6 +56,7 @@ public class OAuth2RefreshTokenProcessingFilter extends OncePerRequestFilter {
         this.refreshTokenGenerator = refreshTokenGenerator;
     }
 
+    @Transactional
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
@@ -91,13 +94,18 @@ public class OAuth2RefreshTokenProcessingFilter extends OncePerRequestFilter {
             } catch (JOSEException e) {
                 throw new RuntimeException(e);
             }
-
+            user.setRefreshTokenValue(refreshTokenValue);
+            user.setRefreshTokenIssuedAt(LocalDateTime.ofInstant(iat, Clock.systemUTC().getZone()));
+            userRepository.update(user);
             OAuth2AccessTokenResponse tokenResponse = OAuth2AccessTokenResponse.withToken(accessToken.getTokenValue())
                     .tokenType(OAuth2AccessToken.TokenType.BEARER)
                     .expiresIn(ChronoUnit.SECONDS.between(accessToken.getIssuedAt(), accessToken.getExpiresAt()))
                     .refreshToken(refreshToken.getTokenValue())
                     .additionalParameters(Map.of("id_token", idToken.getTokenValue()))
                     .build();
+
+
+
 
             this.accessTokenHttpResponseConverter.write(tokenResponse, MediaType.APPLICATION_JSON, new ServletServerHttpResponse(response));
         }
