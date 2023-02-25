@@ -7,17 +7,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Repository
 public class RoleRepositoryMybatis implements RoleRepository {
 
     private final RoleMapper roleMapper;
-
-    @Override
-    public List<Role> findAll() {
-        return roleMapper.findAll();
-    }
 
     @Override
     public int addRole(Role role, String parentId) {
@@ -47,5 +43,19 @@ public class RoleRepositoryMybatis implements RoleRepository {
     @Override
     public int updateRoleOfUser(String userId, String roleId) {
         return roleMapper.updateRoleOfUser(userId, roleId);
+    }
+
+    @Override
+    public List<Role> findAll() {
+        return roleMapper.findAll();
+    }
+
+    @Override
+    public Map<String, Object> findRoles(int offset, int size) {
+
+        List<Role> roles = roleMapper.findRoles(offset, size);
+        int totalCount = roleMapper.findRolesCount();
+
+        return Map.of("roles", roles, "totalCount", totalCount);
     }
 }

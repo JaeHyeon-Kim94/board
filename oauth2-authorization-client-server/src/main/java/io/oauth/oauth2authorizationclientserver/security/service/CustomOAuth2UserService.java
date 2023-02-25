@@ -31,6 +31,7 @@ import org.springframework.web.client.UnknownContentTypeException;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -113,7 +114,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         OidcIdToken idToken;
         OAuth2RefreshToken refreshToken;
 
-        Instant iat = Instant.now();
+        Instant iat = LocalDateTime.now().toInstant(ZoneOffset.UTC);
         Instant exp = iat.plus(refreshExpTerm, ChronoUnit.MINUTES);
 
         try {

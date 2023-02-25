@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.oauth.resourceserverrolesresources.service.RoleService;
 import io.oauth.resourceserverrolesresources.web.domain.Role;
+import io.oauth.resourceserverrolesresources.web.page.Pageable;
 import io.oauth.resourceserverrolesresources.web.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
 
 import static io.oauth.resourceserverrolesresources.web.utils.ApiUtils.*;
 
@@ -61,10 +63,15 @@ public class RoleRestController {
     }
 
     @GetMapping
-    public ResponseEntity<String> getRoles() throws JsonProcessingException {
-        List<Role> roles = roleService.findAll();
-
-        String result = objectMapper.writeValueAsString(roles);
+    public ResponseEntity<String> getRoles(Pageable pageable) throws JsonProcessingException {
+        String result = null;
+        if(pageable == null){
+            List<Role> roles = roleService.findAll();
+            result = objectMapper.writeValueAsString(roles);
+        } else {
+            Map<String, Object> rolesWithTotalCount = roleService.findRoles(pageable.getOffset(), pageable.getSize());
+            result = objectMapper.writeValueAsString(rolesWithTotalCount);
+        }
 
         return successOk(result, MediaType.APPLICATION_JSON);
     }

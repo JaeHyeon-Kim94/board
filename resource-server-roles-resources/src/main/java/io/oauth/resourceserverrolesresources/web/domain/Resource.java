@@ -7,7 +7,7 @@ public class Resource {
 
     private Long id;
     private String type;
-    private String level;
+    private Long level;
     private String value;
     private String httpMethod;
     private Role role;

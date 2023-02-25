@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS  `tb_resource`
 (
     `id`                    BIGINT(20)      AUTO_INCREMENT,
     `resource_type`         VARCHAR(45)     NOT NULL,
-    `resource_level`        VARCHAR(50)     NOT NULL,
+    `resource_level`        BIGINT(20)     NOT NULL,
     `tb_role_id`            VARCHAR(100)    NOT NULL,
     `resource_value`        VARCHAR(200)    NOT NULL,
     `resource_http_method`  VARCHAR(45)     NULL,

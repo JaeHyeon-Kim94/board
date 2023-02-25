@@ -47,4 +47,16 @@
         r.role_name
         <include refid="joinUserWithRoleRelationshipTable"/>
     </select>
+
+    <select id="findUsers" resultMap="userWithRolesResultMap" parameterType="Map">
+        SELECT
+        u.user_id,      u.fullname,     u.nickname,
+        r.role_name
+        <include refid="joinUserWithRoleRelationshipTable"/>
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="findUsersCount" resultType="int">
+        SELECT COUNT(*) FROM tb_user;
+    </select>
 </mapper>

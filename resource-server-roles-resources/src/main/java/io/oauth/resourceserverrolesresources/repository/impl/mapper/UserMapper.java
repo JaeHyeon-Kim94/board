@@ -12,4 +12,8 @@ public interface UserMapper {
     User findByUserId(String userId);
     List<User> findAll();
 
+    List<User> findUsers(int offset, int size);
+
+    int findUsersCount();
+
 }

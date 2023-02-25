@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.oauth.resourceserverrolesresources.service.UserService;
 import io.oauth.resourceserverrolesresources.web.domain.User;
+import io.oauth.resourceserverrolesresources.web.page.Pageable;
 import io.oauth.resourceserverrolesresources.web.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 import static io.oauth.resourceserverrolesresources.web.utils.ApiUtils.*;
 
@@ -26,10 +28,15 @@ public class UserRestController {
     private final ObjectMapper objectMapper;
 
     @GetMapping
-    public ResponseEntity<String> getUsers() throws JsonProcessingException {
-        List<User> users = userService.findAll();
-
-        String result = objectMapper.writeValueAsString(users);
+    public ResponseEntity<String> getUsers(Pageable pageable) throws JsonProcessingException {
+        String result = null;
+        if(pageable == null){
+            List<User> users = userService.findAll();
+            result = objectMapper.writeValueAsString(users);
+        }else {
+            Map<String, Object> usersWithTotalCount = userService.findUsers(pageable.getOffset(), pageable.getSize());
+            result = objectMapper.writeValueAsString(usersWithTotalCount);
+        }
 
         return successOk(result, MediaType.APPLICATION_JSON);
     }

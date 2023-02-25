@@ -14,12 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 
 @RequiredArgsConstructor
-@Transactional
 @Service
 public class ResourceService {
 
     private final ResourceRepository resourceRepository;
 
+    @Transactional(readOnly = true)
     public LinkedHashMap<RequestMatcher, List<ConfigAttribute>> getResourceList(){
         LinkedHashMap<RequestMatcher, List<ConfigAttribute>> resources = new LinkedHashMap<>();
         List<Resource> foundResources = resourceRepository.findAll();
@@ -33,23 +33,35 @@ public class ResourceService {
         return resources;
     }
 
+    @Transactional
     public Resource addResource(Resource resource, String roleId){
         return resourceRepository.addRole(resource, roleId);
     }
 
+    @Transactional
     public int updateResource(Resource resource, String roleId) {
         return resourceRepository.updateRole(resource, roleId);
     }
 
+    @Transactional
     public int deleteResource(String resourceId) {
         return resourceRepository.deleteResource(resourceId);
     }
 
+    @Transactional(readOnly = true)
     public List<Resource> findAll(){
         return resourceRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
+    public Map<String, Object> findResources(int offset, int size) {
+        return resourceRepository.findByResources(offset, size);
+    }
+
+    @Transactional(readOnly = true)
     public Resource findById(String resourceId){
         return resourceRepository.findById(resourceId);
     }
+
+
 }

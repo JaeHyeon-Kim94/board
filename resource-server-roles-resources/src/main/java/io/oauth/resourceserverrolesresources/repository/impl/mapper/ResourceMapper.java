@@ -4,6 +4,7 @@ import io.oauth.resourceserverrolesresources.web.domain.Resource;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface ResourceMapper {
@@ -13,4 +14,8 @@ public interface ResourceMapper {
     int delete(String resourceId);
     List<Resource> findAll();
     Resource findById(String resourceId);
+
+    List<Resource> findResources(int offset, int size);
+
+    int findResourcesCount();
 }

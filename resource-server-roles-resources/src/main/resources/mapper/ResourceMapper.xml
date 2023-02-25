@@ -18,6 +18,8 @@
     </resultMap>
 
 
+
+
     <insert id="insert" useGeneratedKeys="true" keyProperty="resource.id" parameterType="Map">
         INSERT INTO tb_resource(
             resource_type, resource_level, tb_role_id, resource_value, resource_http_method
@@ -62,6 +64,16 @@
     <select id="findAll" resultMap="resourceWithRole">
         <include refid="selectResourceWithRoleSql"/>
         ORDER BY re.resource_level DESC
+    </select>
+
+    <select id="findResources" resultMap="resourceWithRole" parameterType="Map">
+        <include refid="selectResourceWithRoleSql"/>
+        ORDER BY re.resource_level DESC
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="findResourcesCount" resultType="int">
+        SELECT COUNT(*) FROM tb_resource;
     </select>
 
 </mapper>

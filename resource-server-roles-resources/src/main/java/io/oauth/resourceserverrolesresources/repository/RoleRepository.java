@@ -3,10 +3,10 @@ package io.oauth.resourceserverrolesresources.repository;
 import io.oauth.resourceserverrolesresources.web.domain.Role;
 
 import java.util.List;
+import java.util.Map;
 
 public interface RoleRepository {
 
-    List<Role> findAll();
     int addRole(Role role, String parentId);
 
     Role findByName(String roleName);
@@ -18,4 +18,8 @@ public interface RoleRepository {
     int addRoleOfUser(String userId, String roleId);
 
     int updateRoleOfUser(String userId, String roleId);
+
+    List<Role> findAll();
+
+    Map<String, Object> findRoles(int offset, int size);
 }

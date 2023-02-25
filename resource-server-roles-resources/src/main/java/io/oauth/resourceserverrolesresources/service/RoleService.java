@@ -10,18 +10,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
-@Transactional
 @Service
 public class RoleService {
 
     private final RoleHierarchyImpl roleHierarchy;
     private final RoleRepository roleRepository;
 
-
-    public String findRoleHierarchy(){
+    @Transactional(readOnly = true)
+    public void setRoleHierarchy(){
         List<Role> roles = roleRepository.findAll();
         Iterator<Role> iterator = roles.iterator();
 
@@ -36,42 +36,49 @@ public class RoleService {
             }
         }
         log.info("\nconcatedRoles.toString : \n{}", concatedRoles.toString());
-        return concatedRoles.toString();
+
+        roleHierarchy.setHierarchy(concatedRoles.toString());
     }
 
-    public void setRoleHierarchy(){
-        String formattedRoleHierarchy = findRoleHierarchy();
-        roleHierarchy.setHierarchy(formattedRoleHierarchy);
-    }
-
-
+    @Transactional
     public int addRole(Role role, String parentId){
         int result = roleRepository.addRole(role, parentId);
         setRoleHierarchy();
 
         return result;
     }
+
+    @Transactional
     public int updateRole(Role role, String parentRoleId){
         int result = roleRepository.updateRole(role, parentRoleId);
         setRoleHierarchy();
         return result;
     }
 
+    @Transactional
     public int deleteRole(String roleId){
         int result = roleRepository.deleteRole(roleId);
         setRoleHierarchy();
         return result;
     }
 
+    @Transactional
     public int addRoleOfUser(String userId, String roleId){
         return roleRepository.addRoleOfUser(userId, roleId);
     }
 
+    @Transactional
     public int updateRoleOfUser(String userId, String roleId){
         return roleRepository.updateRoleOfUser(userId, roleId);
     }
 
+    @Transactional(readOnly = true)
     public List<Role> findAll(){
         return roleRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> findRoles(int offset, int size){
+        return roleRepository.findRoles(offset, size);
     }
 }

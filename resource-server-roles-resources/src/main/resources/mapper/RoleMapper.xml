@@ -70,4 +70,17 @@
         tb_role AS c
         LEFT OUTER JOIN tb_role AS p ON c.parent_id = p.id
     </select>
+
+    <select id="findRoles" resultMap="rolesWithParentResultMap" parameterType="Map">
+        SELECT c.id AS c_id,    c.role_desc AS c_role_desc, c.role_name AS c_role_name,
+        p.id AS p_id,    p.role_desc AS p_role_desc, p.role_name AS p_role_name
+        FROM
+        tb_role AS c
+        LEFT OUTER JOIN tb_role AS p ON c.parent_id = p.id
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="findRolesCount" resultType="int">
+        SELECT COUNT(*) FROM tb_role;
+    </select>
 </mapper>

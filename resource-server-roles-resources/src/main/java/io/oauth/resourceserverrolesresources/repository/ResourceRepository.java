@@ -4,6 +4,7 @@ package io.oauth.resourceserverrolesresources.repository;
 import io.oauth.resourceserverrolesresources.web.domain.Resource;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ResourceRepository {
 
@@ -12,4 +13,6 @@ public interface ResourceRepository {
     int deleteResource(String resourceId);
     List<Resource> findAll();
     Resource findById(String resourceId);
+
+    Map<String, Object> findByResources(int offset, int size);
 }

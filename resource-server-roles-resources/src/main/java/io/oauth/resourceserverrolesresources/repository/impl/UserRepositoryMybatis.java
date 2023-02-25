@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Repository
@@ -23,5 +24,13 @@ public class UserRepositoryMybatis implements UserRepository {
     @Override
     public List<User> findAll() {
         return userMapper.findAll();
+    }
+
+    @Override
+    public Map<String, Object> findUsers(int offset, int size) {
+
+        List<User> users = userMapper.findUsers(offset, size);
+        int totalCount = userMapper.findUsersCount();
+        return Map.of("users", users, "totalCount", totalCount);
     }
 }

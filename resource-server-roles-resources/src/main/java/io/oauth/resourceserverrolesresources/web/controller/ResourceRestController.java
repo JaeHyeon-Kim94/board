@@ -4,14 +4,21 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.oauth.resourceserverrolesresources.service.ResourceService;
 import io.oauth.resourceserverrolesresources.web.domain.Resource;
+import io.oauth.resourceserverrolesresources.web.page.Pageable;
+import io.oauth.resourceserverrolesresources.web.page.SimplePageRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpRange;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
 
 import static io.oauth.resourceserverrolesresources.web.utils.ApiUtils.*;
 
@@ -59,9 +66,18 @@ public class ResourceRestController {
     }
 
     @GetMapping
-    public ResponseEntity<String> findResourcAll() throws JsonProcessingException {
-        List<Resource> resources = resourceService.findAll();
-        String result = objectMapper.writeValueAsString(resources);
+    public ResponseEntity<String> findResources(Pageable pageable) throws JsonProcessingException {
+        String result = null;
+
+        if(pageable == null){
+            List<Resource> resources = resourceService.findAll();
+            result = objectMapper.writeValueAsString(resources);
+        }else{
+            Map<String, Object> resourcesWithTotalCount = resourceService.findResources(pageable.getOffset(), pageable.getSize());
+            result = objectMapper.writeValueAsString(resourcesWithTotalCount);
+        }
+
+
 
         return successOk(result, MediaType.APPLICATION_JSON);
     }

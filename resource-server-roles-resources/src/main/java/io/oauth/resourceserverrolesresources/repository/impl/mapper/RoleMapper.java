@@ -8,8 +8,6 @@ import java.util.List;
 @Mapper
 public interface RoleMapper {
 
-    List<Role> findAll();
-
     int insert(Role role, String parentId);
 
     Role findByName(String roleName);
@@ -21,4 +19,10 @@ public interface RoleMapper {
     int addRoleOfUser(String userId, String roleId);
 
     int updateRoleOfUser(String userId, String roleId);
+
+    List<Role> findAll();
+
+    List<Role> findRoles(int offset, int size);
+
+    int findRolesCount();
 }

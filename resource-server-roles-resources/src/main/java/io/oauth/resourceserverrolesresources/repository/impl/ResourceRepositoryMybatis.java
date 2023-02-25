@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Repository
@@ -34,6 +35,14 @@ public class ResourceRepositoryMybatis implements ResourceRepository {
     @Override
     public List<Resource> findAll() {
         return resourceMapper.findAll();
+    }
+
+    @Override
+    public Map<String, Object> findByResources(int offset, int size) {
+        List<Resource> resources = resourceMapper.findResources(offset, size);
+        int totalCount = resourceMapper.findResourcesCount();
+
+        return Map.of("resources", resources, "totalCount", totalCount);
     }
 
     @Override

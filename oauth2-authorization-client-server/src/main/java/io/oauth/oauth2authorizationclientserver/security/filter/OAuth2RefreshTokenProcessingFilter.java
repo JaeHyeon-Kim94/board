@@ -94,7 +94,7 @@ public class OAuth2RefreshTokenProcessingFilter extends OncePerRequestFilter {
             } catch (JOSEException e) {
                 throw new RuntimeException(e);
             }
-            user.setRefreshTokenValue(refreshTokenValue);
+            user.setRefreshTokenValue(refreshToken.getTokenValue());
             user.setRefreshTokenIssuedAt(LocalDateTime.ofInstant(iat, Clock.systemUTC().getZone()));
             userRepository.update(user);
             OAuth2AccessTokenResponse tokenResponse = OAuth2AccessTokenResponse.withToken(accessToken.getTokenValue())
