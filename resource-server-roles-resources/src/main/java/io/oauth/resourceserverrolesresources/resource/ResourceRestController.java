@@ -1,19 +1,12 @@
-package io.oauth.resourceserverrolesresources.web.controller;
+package io.oauth.resourceserverrolesresources.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.oauth.resourceserverrolesresources.service.ResourceService;
-import io.oauth.resourceserverrolesresources.web.domain.Resource;
 import io.oauth.resourceserverrolesresources.web.page.Pageable;
-import io.oauth.resourceserverrolesresources.web.page.SimplePageRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpRange;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.MultiValueMap;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URISyntaxException;
@@ -76,8 +69,6 @@ public class ResourceRestController {
             Map<String, Object> resourcesWithTotalCount = resourceService.findResources(pageable.getOffset(), pageable.getSize());
             result = objectMapper.writeValueAsString(resourcesWithTotalCount);
         }
-
-
 
         return successOk(result, MediaType.APPLICATION_JSON);
     }

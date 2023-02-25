@@ -1,18 +1,12 @@
-package io.oauth.resourceserverrolesresources.web.controller;
+package io.oauth.resourceserverrolesresources.user;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.oauth.resourceserverrolesresources.service.UserService;
-import io.oauth.resourceserverrolesresources.web.domain.User;
 import io.oauth.resourceserverrolesresources.web.page.Pageable;
-import io.oauth.resourceserverrolesresources.web.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -48,6 +42,22 @@ public class UserRestController {
         String result = objectMapper.writeValueAsString(user);
 
         return successOk(result, MediaType.APPLICATION_JSON);
+    }
+
+    @PostMapping("/{userId}/roles/{roleId}")
+    public ResponseEntity addRoleOfUser(@PathVariable String roleId, @PathVariable String userId) throws JsonProcessingException {
+
+        userService.addUserRole(roleId, userId);
+
+        return successNoContent();
+    }
+
+    @PutMapping("/{userId}/roles/{roleId}")
+    public ResponseEntity updateRoleOfUser(@PathVariable String roleId, @PathVariable String userId) throws JsonProcessingException {
+
+        userService.updateUserRole(roleId, userId);
+
+        return successNoContent();
     }
 
 }

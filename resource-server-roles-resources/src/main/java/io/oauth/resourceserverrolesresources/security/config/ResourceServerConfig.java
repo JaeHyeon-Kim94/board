@@ -3,7 +3,7 @@ package io.oauth.resourceserverrolesresources.security.config;
 import io.oauth.resourceserverrolesresources.security.factory.UrlResourcesMapFactoryBean;
 import io.oauth.resourceserverrolesresources.security.metadatasource.UrlFilterInvocationSecurityMetadataSource;
 import io.oauth.resourceserverrolesresources.security.resolver.CustomJwtIssuerAuthenticationManagerResolver;
-import io.oauth.resourceserverrolesresources.service.ResourceService;
+import io.oauth.resourceserverrolesresources.resource.ResourceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

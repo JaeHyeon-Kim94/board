@@ -1,4 +1,4 @@
-package io.oauth.resourceserverrolesresources.web.domain;
+package io.oauth.resourceserverrolesresources.role;
 
 import lombok.Data;
 

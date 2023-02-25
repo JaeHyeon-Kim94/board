@@ -1,5 +1,6 @@
-package io.oauth.resourceserverrolesresources.web.domain;
+package io.oauth.resourceserverrolesresources.user;
 
+import io.oauth.resourceserverrolesresources.role.Role;
 import lombok.Data;
 
 import java.time.LocalDate;

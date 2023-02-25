@@ -1,7 +1,5 @@
-package io.oauth.resourceserverrolesresources.service;
+package io.oauth.resourceserverrolesresources.role;
 
-import io.oauth.resourceserverrolesresources.repository.RoleRepository;
-import io.oauth.resourceserverrolesresources.web.domain.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
@@ -40,19 +38,23 @@ public class RoleService {
         roleHierarchy.setHierarchy(concatedRoles.toString());
     }
 
+    /**
+     * @param dto
+     * @return put 요청에 대해 insert or update 처리 여부 반환(insert시 true, update시 false)
+     */
     @Transactional
-    public int addRole(Role role, String parentId){
-        int result = roleRepository.addRole(role, parentId);
-        setRoleHierarchy();
+    public boolean putRole(RolePutDto dto){
 
-        return result;
-    }
+        Role role = roleRepository.findById(dto.getId());
+        if(role == null){
+            roleRepository.addRole(RolePutDto.toRole(dto), dto.getParentId());
+            return true;
+        }
 
-    @Transactional
-    public int updateRole(Role role, String parentRoleId){
-        int result = roleRepository.updateRole(role, parentRoleId);
+        roleRepository.updateRole(RolePutDto.toRole(dto), dto.getParentId());
+
         setRoleHierarchy();
-        return result;
+        return false;
     }
 
     @Transactional
@@ -60,16 +62,6 @@ public class RoleService {
         int result = roleRepository.deleteRole(roleId);
         setRoleHierarchy();
         return result;
-    }
-
-    @Transactional
-    public int addRoleOfUser(String userId, String roleId){
-        return roleRepository.addRoleOfUser(userId, roleId);
-    }
-
-    @Transactional
-    public int updateRoleOfUser(String userId, String roleId){
-        return roleRepository.updateRoleOfUser(userId, roleId);
     }
 
     @Transactional(readOnly = true)

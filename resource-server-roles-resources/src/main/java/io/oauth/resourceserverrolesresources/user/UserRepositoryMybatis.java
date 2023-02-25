@@ -1,8 +1,5 @@
-package io.oauth.resourceserverrolesresources.repository.impl;
+package io.oauth.resourceserverrolesresources.user;
 
-import io.oauth.resourceserverrolesresources.repository.UserRepository;
-import io.oauth.resourceserverrolesresources.repository.impl.mapper.UserMapper;
-import io.oauth.resourceserverrolesresources.web.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -19,6 +16,16 @@ public class UserRepositoryMybatis implements UserRepository {
     @Override
     public User findByUserId(String userId) {
         return userMapper.findByUserId(userId);
+    }
+
+    @Override
+    public int addUserRole(String userId, String roleId) {
+        return userMapper.addUserRole(userId, roleId);
+    }
+
+    @Override
+    public int updateUserRole(String userId, String roleId) {
+        return userMapper.updateUserRole(userId, roleId);
     }
 
     @Override

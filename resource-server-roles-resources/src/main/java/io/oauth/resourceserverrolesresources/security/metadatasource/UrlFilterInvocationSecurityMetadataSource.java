@@ -1,6 +1,6 @@
 package io.oauth.resourceserverrolesresources.security.metadatasource;
 
-import io.oauth.resourceserverrolesresources.service.ResourceService;
+import io.oauth.resourceserverrolesresources.resource.ResourceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.ConfigAttribute;

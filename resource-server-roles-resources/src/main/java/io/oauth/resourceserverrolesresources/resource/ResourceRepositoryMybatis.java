@@ -1,8 +1,5 @@
-package io.oauth.resourceserverrolesresources.repository.impl;
+package io.oauth.resourceserverrolesresources.resource;
 
-import io.oauth.resourceserverrolesresources.repository.ResourceRepository;
-import io.oauth.resourceserverrolesresources.repository.impl.mapper.ResourceMapper;
-import io.oauth.resourceserverrolesresources.web.domain.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

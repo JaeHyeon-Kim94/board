@@ -1,8 +1,6 @@
-package io.oauth.resourceserverrolesresources.service;
+package io.oauth.resourceserverrolesresources.resource;
 
-import io.oauth.resourceserverrolesresources.repository.ResourceRepository;
-import io.oauth.resourceserverrolesresources.web.domain.Resource;
-import io.oauth.resourceserverrolesresources.web.domain.Role;
+import io.oauth.resourceserverrolesresources.role.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;

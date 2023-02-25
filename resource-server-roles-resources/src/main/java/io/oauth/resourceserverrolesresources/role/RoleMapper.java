@@ -1,6 +1,5 @@
-package io.oauth.resourceserverrolesresources.repository.impl.mapper;
+package io.oauth.resourceserverrolesresources.role;
 
-import io.oauth.resourceserverrolesresources.web.domain.Role;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -12,13 +11,11 @@ public interface RoleMapper {
 
     Role findByName(String roleName);
 
+    Role findById(String roleId);
+
     int updateRole(Role role, String parentId);
 
     int deleteRole(String roleId);
-
-    int addRoleOfUser(String userId, String roleId);
-
-    int updateRoleOfUser(String userId, String roleId);
 
     List<Role> findAll();
 

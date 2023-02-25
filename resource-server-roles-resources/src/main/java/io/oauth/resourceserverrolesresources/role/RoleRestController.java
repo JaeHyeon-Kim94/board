@@ -1,11 +1,8 @@
-package io.oauth.resourceserverrolesresources.web.controller;
+package io.oauth.resourceserverrolesresources.role;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.oauth.resourceserverrolesresources.service.RoleService;
-import io.oauth.resourceserverrolesresources.web.domain.Role;
 import io.oauth.resourceserverrolesresources.web.page.Pageable;
-import io.oauth.resourceserverrolesresources.web.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -28,38 +25,15 @@ public class RoleRestController {
     private final RoleService roleService;
     private final ObjectMapper objectMapper;
 
-    @PostMapping
-    public ResponseEntity addRole(@RequestBody String role, @RequestParam("parent-id") String parentId) throws JsonProcessingException, URISyntaxException {
-        Role roleForAdd = objectMapper.readValue(role, Role.class);
-        roleService.addRole(roleForAdd, parentId);
+    @PutMapping("/{roleId}")
+    public ResponseEntity updateRole(@RequestBody String role) throws JsonProcessingException, URISyntaxException {
 
-        return successCreated(DEFAULT_PATH+roleForAdd.getId());
-    }
+        RolePutDto rolePutDto = objectMapper.readValue(role, RolePutDto.class);
 
-    @PutMapping
-    public ResponseEntity updateRole(@RequestBody String role, @RequestParam("parent-id") String id) throws JsonProcessingException, URISyntaxException {
+        boolean created = roleService.putRole(rolePutDto);
 
-        Role roleForUpdate = objectMapper.readValue(role, Role.class);
 
-        roleService.updateRole(roleForUpdate, id);
-
-        return successNoContent();
-    }
-
-    @PostMapping("/{roleId}/user/{userId}")
-    public ResponseEntity addRoleOfUser(@PathVariable String roleId, @PathVariable String userId) throws JsonProcessingException {
-
-        roleService.addRoleOfUser(roleId, userId);
-
-        return successNoContent();
-    }
-
-    @PutMapping("/{roleId}/user/{userId}")
-    public ResponseEntity updateRoleOfUser(@PathVariable String roleId, @PathVariable String userId) throws JsonProcessingException {
-
-        roleService.updateRoleOfUser(roleId, userId);
-
-        return successNoContent();
+        return created ? successCreated(DEFAULT_PATH+rolePutDto.getId()) : successNoContent();
     }
 
     @GetMapping
@@ -79,6 +53,7 @@ public class RoleRestController {
     @DeleteMapping("/{roleId}")
     public ResponseEntity<Void> deleteRole(@PathVariable String roleId){
         roleService.deleteRole(roleId);
+        roleService.setRoleHierarchy();
 
         return successNoContent();
     }

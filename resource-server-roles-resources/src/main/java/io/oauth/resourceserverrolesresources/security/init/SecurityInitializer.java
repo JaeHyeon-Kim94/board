@@ -1,7 +1,7 @@
 package io.oauth.resourceserverrolesresources.security.init;
 
 
-import io.oauth.resourceserverrolesresources.service.RoleService;
+import io.oauth.resourceserverrolesresources.role.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;

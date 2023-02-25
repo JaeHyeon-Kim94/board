@@ -1,7 +1,5 @@
-package io.oauth.resourceserverrolesresources.service;
+package io.oauth.resourceserverrolesresources.user;
 
-import io.oauth.resourceserverrolesresources.repository.UserRepository;
-import io.oauth.resourceserverrolesresources.web.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +16,16 @@ public class UserService {
     @Transactional(readOnly = true)
     public User findById(String userId){
         return userRepository.findByUserId(userId);
+    }
+
+    @Transactional
+    public int addUserRole(String userId, String roleId){
+        return userRepository.addUserRole(userId, roleId);
+    }
+
+    @Transactional
+    public int updateUserRole(String userId, String roleId){
+        return userRepository.updateUserRole(userId, roleId);
     }
 
     @Transactional(readOnly = true)

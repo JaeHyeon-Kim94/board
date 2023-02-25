@@ -1,6 +1,6 @@
 package io.oauth.resourceserverrolesresources.security.factory;
 
-import io.oauth.resourceserverrolesresources.service.ResourceService;
+import io.oauth.resourceserverrolesresources.resource.ResourceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.security.access.ConfigAttribute;

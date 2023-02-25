@@ -1,10 +1,8 @@
-package io.oauth.resourceserverrolesresources.repository.impl.mapper;
+package io.oauth.resourceserverrolesresources.resource;
 
-import io.oauth.resourceserverrolesresources.web.domain.Resource;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
-import java.util.Map;
 
 @Mapper
 public interface ResourceMapper {

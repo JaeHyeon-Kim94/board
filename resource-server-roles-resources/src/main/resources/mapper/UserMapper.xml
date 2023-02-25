@@ -3,8 +3,8 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="io.oauth.resourceserverrolesresources.repository.impl.mapper.UserMapper">
-    <resultMap id="userWithRolesResultMap"        type="User">
+<mapper namespace="io.oauth.resourceserverrolesresources.user.UserMapper">
+    <resultMap id="userWithRolesResultMap"        type="io.oauth.resourceserverrolesresources.user.User">
         <id property="userId"                           column="user_id"/>
         <id property="providerId"                       column="provider_id"/>
         <result property="fullname"                     column="fullname"/>
@@ -14,7 +14,7 @@
         <result property="birth"                        column="birth"/>
         <result property="regDate"                      column="reg_date"/>
         <result property="modDate"                      column="mod_date"/>
-        <collection property="roles"              ofType="Role">
+        <collection property="roles"              ofType="io.oauth.resourceserverrolesresources.role.Role">
             <id property="id"                           column="id"/>
             <result property="description"              column="role_desc"/>
             <result property="name"                     column="role_name"/>
@@ -47,6 +47,23 @@
         r.role_name
         <include refid="joinUserWithRoleRelationshipTable"/>
     </select>
+
+    <insert id="addRoleOfUser" parameterType="Map">
+        INSERT INTO tb_user_role(
+        tb_role_id, tb_user_user_id
+        )
+        VALUES(
+        #{roleId}, #{userId}
+        )
+    </insert>
+
+    <update id="updateRoleOfUser" parameterType="Map">
+        UPDATE tb_user_role
+        SET
+        tb_role_id = #{roleId}
+        WHERE
+        tb_user_user_id = #{userId}
+    </update>
 
     <select id="findUsers" resultMap="userWithRolesResultMap" parameterType="Map">
         SELECT

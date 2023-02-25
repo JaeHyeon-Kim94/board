@@ -2,15 +2,17 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="io.oauth.resourceserverrolesresources.repository.impl.mapper.ResourceMapper">
+<mapper namespace="io.oauth.resourceserverrolesresources.resource.ResourceMapper">
 
-    <resultMap id="resourceWithRole" type="Resource">
+
+
+    <resultMap id="resourceWithRole" type="io.oauth.resourceserverrolesresources.resource.Resource">
         <id property="id"       column="re_id"/>
         <result property="type" column="resource_type"/>
         <result property="level" column="resource_level"/>
         <result property="value" column="resource_value"/>
         <result property="httpMethod" column="resource_http_method"/>
-        <association property="role" javaType="Role">
+        <association property="role" javaType="io.oauth.resourceserverrolesresources.role.Role">
             <id property="id" column="ro_id"/>
             <result property="description" column="role_desc"/>
             <result property="name"         column="role_name"/>
