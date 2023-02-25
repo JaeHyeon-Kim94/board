@@ -52,16 +52,12 @@ public class RoleService {
         }
 
         roleRepository.updateRole(RolePutDto.toRole(dto), dto.getParentId());
-
-        setRoleHierarchy();
         return false;
     }
 
     @Transactional
     public int deleteRole(String roleId){
-        int result = roleRepository.deleteRole(roleId);
-        setRoleHierarchy();
-        return result;
+        return roleRepository.deleteRole(roleId);
     }
 
     @Transactional(readOnly = true)

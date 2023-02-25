@@ -2,6 +2,7 @@ package io.oauth.resourceserverrolesresources.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.oauth.resourceserverrolesresources.security.metadatasource.UrlFilterInvocationSecurityMetadataSource;
 import io.oauth.resourceserverrolesresources.web.page.Pageable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ import static io.oauth.resourceserverrolesresources.web.utils.ApiUtils.*;
 public class ResourceRestController {
     private static final String DEFAULT_PATH = "/api/resources/";
     private final ResourceService resourceService;
+    private final UrlFilterInvocationSecurityMetadataSource urlFilterInvocationSecurityMetadataSource;
     private final ObjectMapper objectMapper;
 
     @PostMapping
@@ -29,7 +31,7 @@ public class ResourceRestController {
         Resource resourceForAdd = objectMapper.readValue(resource, Resource.class);
 
         Resource result = resourceService.addResource(resourceForAdd, roleId);
-
+        urlFilterInvocationSecurityMetadataSource.reload();
         return successCreated(DEFAULT_PATH + result.getId());
     }
 
@@ -38,14 +40,14 @@ public class ResourceRestController {
         Resource resourceForUpdate = objectMapper.readValue(resource, Resource.class);
 
         resourceService.updateResource(resourceForUpdate, roleId);
-
+        urlFilterInvocationSecurityMetadataSource.reload();
         return successNoContent();
     }
 
     @DeleteMapping("/{resourceId}")
     public ResponseEntity<Void> deleteResource(@PathVariable String resourceId){
         resourceService.deleteResource(resourceId);
-
+        urlFilterInvocationSecurityMetadataSource.reload();
         return successNoContent();
     }
 

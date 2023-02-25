@@ -32,6 +32,8 @@ public class RoleRestController {
 
         boolean created = roleService.putRole(rolePutDto);
 
+        //계층구조 재설정.
+        roleService.setRoleHierarchy();
 
         return created ? successCreated(DEFAULT_PATH+rolePutDto.getId()) : successNoContent();
     }
@@ -53,6 +55,7 @@ public class RoleRestController {
     @DeleteMapping("/{roleId}")
     public ResponseEntity<Void> deleteRole(@PathVariable String roleId){
         roleService.deleteRole(roleId);
+        //계층구조 재설정.
         roleService.setRoleHierarchy();
 
         return successNoContent();
