@@ -6,7 +6,6 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import io.oauth.oauth2authorizationclientserver.security.model.PrincipalDetails;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.time.Instant;
@@ -35,8 +34,7 @@ public abstract class SecuritySigner {
         Date exp = Date.from(now.plus(expTerm, ChronoUnit.MINUTES));
 
 
-        JWTClaimsSet jwtClaimsSet = tokenType.equals(OAuth2ParameterNames.ACCESS_TOKEN) ?
-                buildAccessTokenClaims(user, iat, exp) : buildIdTokenClaims(user, iat, exp);
+        JWTClaimsSet jwtClaimsSet = buildTokenClaims(user, iat, exp);
 
         SignedJWT signedJWT = new SignedJWT(header,jwtClaimsSet);
         signedJWT.sign(jwsSigner);
@@ -45,23 +43,7 @@ public abstract class SecuritySigner {
         return jwtToken;
     }
 
-    private JWTClaimsSet buildIdTokenClaims(OAuth2User user, Date iat, Date exp) {
-        PrincipalDetails principal = (PrincipalDetails) user;
-
-        return new JWTClaimsSet.Builder()
-                .subject(principal.getName())
-                .issuer(issuer)
-                .audience(audience)
-                .claim("fullname",principal.getUsername())
-                .claim("nickname", principal.getNickname())
-                .issueTime(iat)
-                .expirationTime(exp)
-                .notBeforeTime(iat)
-                .build();
-
-    }
-
-    private JWTClaimsSet buildAccessTokenClaims(OAuth2User user, Date iat, Date exp) {
+    private JWTClaimsSet buildTokenClaims(OAuth2User user, Date iat, Date exp) {
         PrincipalDetails principal = (PrincipalDetails) user;
         List<String> authorities = principal.getAuthorities().stream().map(auth -> auth.getAuthority()).collect(Collectors.toList());
 

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.oauth2.client.board.BoardMapper">
+    <resultMap id="boardWithResource" type="io.oauth2.client.board.Board">
+        <id property="id"       column="bo_id"/>
+        <result property="category" column="category"/>
+        <result property="subject" column="subject"/>
+        <result property="regDate" column="reg_date"/>
+        <result property="modDate" column="mod_date"/>
+        <association property="resource" javaType="io.oauth2.client.resource.Resource">
+            <id property="id"       column="re_id"/>
+            <result property="type" column="resource_type"/>
+            <result property="level" column="resource_level"/>
+            <result property="value" column="resource_value"/>
+            <result property="httpMethod" column="resource_http_method"/>
+        </association>
+        <association property="role" javaType="io.oauth2.client.role.Role">
+            <id property="id"               column="ro.id"/>
+            <result property="description"  column="ro.role_desc"/>
+            <result property="name"         column="ro.role_name"/>
+        </association>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="board.id" parameterType="Map">
+        INSERT INTO tb_board(
+            category, subject, tb_resource_id
+        )
+        VALUES(
+            #{category}, #{subject}, #{resourceId}
+        )
+    </insert>
+
+    <update id="updateBoard" parameterType="Map">
+        UPDATE tb_board
+        SET
+                category    =   #{board.category},
+                subject     =   #{board.subject},
+                tb_resource_id = #{resourceId}
+        WHERE
+            id = #{board.id}
+    </update>
+
+    <delete id="deleteBoard" parameterType="long">
+        DELETE tb_board
+        WHERE id = #{boardId}
+    </delete>
+
+    <sql id="selectBoardWithResourceRoleSql">
+        SELECT
+        bo.id,              bo.category,        bo.subject,
+        bo.reg_date,        bo.mod_date,
+        re.id,              re.resource_type,   re.resource_level,
+        re.resource_value,  resource_http_method
+        ro.id,              ro.role_desc,       ro.role_name
+        FROM
+        tb_board AS bo
+        INNER JOIN tb_resource AS re ON bo.tb_resource_id = re.id
+        INNER JOIN tb_role     AS ro ON re.tb_role_id = ro.id
+    </sql>
+
+    <select id="findBoardById" resultMap="boardWithResourceRole" parameterType="long">
+        <include refid="selectBoardWithResourceRoleSql"/>
+        WHERE bo.id = #{boardId}
+    </select>
+
+    <select id="findBoards" resultMap="boardWithResourceRole" parameterType="Map">
+        <include refid="selectBoardWithResourceRoleSql"/>
+        WHERE bo.id > #{offset}
+        LIMIT #{size}
+    </select>
+
+</mapper>

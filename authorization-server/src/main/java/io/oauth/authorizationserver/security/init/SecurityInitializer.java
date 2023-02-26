@@ -55,8 +55,8 @@ public class SecurityInitializer implements ApplicationRunner {
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
 
                 //redirect uri
-                .redirectUri("http://127.0.0.1:8081")
-                .redirectUri("http://127.0.0.1:8081/login/oauth2/code/myOAuth")
+                .redirectUri("http://127.0.0.1:8080")
+                .redirectUri("http://127.0.0.1:8080/login/oauth2/code/myOAuth")
                 //scopes
                 .scope(OidcScopes.OPENID)
                 .scope(OidcScopes.PROFILE)

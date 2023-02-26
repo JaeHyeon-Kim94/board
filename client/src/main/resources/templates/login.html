@@ -4,15 +4,21 @@
 </head>
 <body>
 <div class="social-login text-center">
-  <a th:href="@{/oauth/login/google}" class="google btn btn-block">
-    <span>Sign in with Google</span>
-  </a>
-  <a th:href="@{/oauth/login/naver}" class="btn btn-block btn-">
-    <span>Sign in with Naver</span>
-  </a>
-  <a th:href="@{/oauth2/authorization/myOAuth}" class="btn btn-block">
-    <span>Sign in with myOAuth</span>
-  </a>
+  <div class="row">
+    <a th:href="@{/api/oauth/google}">
+      <span>Sign in with Google</span>
+    </a>
+  </div>
+  <div class="row">
+    <a th:href="@{/api/oauth/naver}">
+      <span>Sign in with Naver</span>
+    </a>
+  </div>
+  <div class="row">
+    <a th:href="@{/oauth2/authorization/myOAuth}">
+      <span>Sign in with myOAuth</span>
+    </a>
+  </div>
 </div>
 </body>
 </html>

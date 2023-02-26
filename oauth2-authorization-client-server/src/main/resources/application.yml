@@ -11,7 +11,7 @@ authorization-server:
 
 token:
   issuer: http://127.0.0.1:9001
-  audience: http://127.0.0.1:8081
+  audience: http://127.0.0.1:8080
   exp: 15
   refresh:
     exp: 20040

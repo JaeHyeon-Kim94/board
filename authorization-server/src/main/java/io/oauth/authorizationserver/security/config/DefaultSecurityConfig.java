@@ -59,12 +59,6 @@ public class DefaultSecurityConfig {
                 .logoutSuccessUrl("/login")
                 .deleteCookies("JSESSIONID", "remember-me");
 
-        //remember-me config
-        http
-                .rememberMe()
-                .rememberMeParameter("remember-me")
-                .tokenValiditySeconds(3600*24*14);
-
         //Session Management
         http
                 .sessionManagement()
