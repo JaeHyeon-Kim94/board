@@ -34,16 +34,16 @@
             id              = #{role.id}
     </update>
 
-    <delete id="deleteRole" parameterType="Map">
-        DELETE tb_role
-        WHERE tb_user_user_id = #{userId} AND tb_role_id = #{roleId}
+    <delete id="deleteRole" parameterType="string">
+        DELETE FROM tb_role
+        WHERE id = #{roleId}
     </delete>
 
-    <select id="findByName" resultMap="rolesWithParentResultMap">
+    <select id="findById" resultMap="rolesWithParentResultMap">
         SELECT id, role_desc, role_name
         FROM
         tb_role
-        WHERE c.role_name = #{roleName}
+        WHERE id = #{roleId}
     </select>
 
     <select id="findAll" resultMap="rolesWithParentResultMap">

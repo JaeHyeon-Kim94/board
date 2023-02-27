@@ -48,7 +48,7 @@ public class UserRestController {
     @PostMapping("/{userId}/roles/{roleId}")
     public ResponseEntity<Void> addRoleOfUser(@PathVariable String roleId, @PathVariable String userId) {
 
-        userService.addUserRole(roleId, userId);
+        userService.addUserRole(userId, roleId);
 
         return successNoContent();
     }

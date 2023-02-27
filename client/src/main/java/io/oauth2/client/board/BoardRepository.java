@@ -1,10 +1,11 @@
 package io.oauth2.client.board;
 
 import java.util.List;
+import java.util.Map;
 
 public interface BoardRepository {
 
-    Long insert(Board board, Long resourceId);
+    Long addBoard(Board board, Long resourceId);
 
     int updateBoard(Board board, Long resourceId);
 
@@ -12,6 +13,8 @@ public interface BoardRepository {
 
     Board findBoardById(Long boardId);
 
-    List<Board> findBoards(Long offset, int size);
+    Map<String, Object> findBoards(Long offset, int size);
+
+    List<Board> findAll();
 
 }

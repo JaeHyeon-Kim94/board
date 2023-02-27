@@ -14,18 +14,18 @@ public class ResourceRepositoryMybatis implements ResourceRepository {
 
 
     @Override
-    public Resource addRole(Resource resource, String roleId) {
+    public Resource addResource(Resource resource, String roleId) {
         resourceMapper.insert(resource, roleId);
         return resource;
     }
 
     @Override
-    public int updateRole(Resource resource, String roleId) {
+    public int updateResource(Resource resource, String roleId) {
         return resourceMapper.update(resource, roleId);
     }
 
     @Override
-    public int deleteResource(String resourceId) {
+    public int deleteResource(Long resourceId) {
         return resourceMapper.delete(resourceId);
     }
 
@@ -37,13 +37,13 @@ public class ResourceRepositoryMybatis implements ResourceRepository {
     @Override
     public Map<String, Object> findByResources(Long offset, int size) {
         List<Resource> resources = resourceMapper.findResources(offset, size);
-        int totalCount = resourceMapper.findResourcesCount();
+        long totalCount = resourceMapper.findResourcesCount();
 
         return Map.of("resources", resources, "totalCount", totalCount);
     }
 
     @Override
-    public Resource findById(String resourceId) {
+    public Resource findById(Long resourceId) {
         return resourceMapper.findById(resourceId);
     }
 }

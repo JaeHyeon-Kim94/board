@@ -7,8 +7,6 @@ public interface RoleRepository {
 
     int addRole(Role role, String parentId);
 
-    Role findByName(String roleName);
-
     Role findById(String id);
 
     int updateRole(Role role, String parentId);

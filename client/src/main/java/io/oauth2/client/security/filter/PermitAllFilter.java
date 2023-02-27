@@ -67,9 +67,9 @@ public class PermitAllFilter extends FilterSecurityInterceptor {
         }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        //if (!authentication.isAuthenticated()) {
+        if (authentication!=null && !authentication.isAuthenticated()) {
             super.setAuthenticationManager(authenticationManagerResolver.resolve(request));
-        //}
+        }
 
         return super.beforeInvocation(object);
     }

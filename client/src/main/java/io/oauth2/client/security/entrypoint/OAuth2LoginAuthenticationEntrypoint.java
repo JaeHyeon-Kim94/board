@@ -54,6 +54,10 @@ public class OAuth2LoginAuthenticationEntrypoint implements AuthenticationEntryP
     private void getNewAccessToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         Cookie[] cookies = request.getCookies();
+        if(cookies == null){
+            response.sendRedirect("/");
+            return;
+        }
 
         String idToken = null;
         String regId = null;

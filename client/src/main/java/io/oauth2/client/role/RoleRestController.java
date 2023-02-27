@@ -2,6 +2,7 @@ package io.oauth2.client.role;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.oauth2.client.role.dto.RoleRequestDto;
 import io.oauth2.client.web.page.Pageable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,37 +26,34 @@ public class RoleRestController {
     private final ObjectMapper objectMapper;
 
     @PutMapping("/{roleId}")
-    public ResponseEntity<Void> updateRole(@RequestBody String role) throws JsonProcessingException, URISyntaxException {
+    public ResponseEntity<Void> updateRole(@RequestBody RoleRequestDto dto, @PathVariable String roleId) throws JsonProcessingException, URISyntaxException {
+        dto.setId(roleId);
+        boolean created = roleService.putRole(dto);
 
-        RolePutDto rolePutDto = objectMapper.readValue(role, RolePutDto.class);
-
-        boolean created = roleService.putRole(rolePutDto);
-
-        //계층구조 재설정.
-        roleService.setRoleHierarchy();
-
-        return created ? successCreated(DEFAULT_PATH+rolePutDto.getId()) : successNoContent();
+        return created ? successCreated(DEFAULT_PATH+ dto.getId()) : successNoContent();
     }
 
     @GetMapping
-    public ResponseEntity<String> getRoles(Pageable pageable) throws JsonProcessingException {
-        String result = null;
+    public ResponseEntity<Map<String, Object>> getRoles(Pageable pageable) throws JsonProcessingException {
+        Map<String, Object> result = null;
         if(pageable == null){
-            List<Role> roles = roleService.findAll();
-            result = objectMapper.writeValueAsString(roles);
+            result = Map.of("roles", roleService.findAll());
         } else {
-            Map<String, Object> rolesWithTotalCount = roleService.findRoles(pageable.getOffset(), pageable.getSize());
-            result = objectMapper.writeValueAsString(rolesWithTotalCount);
+            result = roleService.findRoles(pageable.getOffset(), pageable.getSize());
         }
 
         return successOk(result);
     }
 
+    @GetMapping("/{roleId}")
+    public ResponseEntity<Role> getRole(@PathVariable String roleId){
+        Role role = roleService.findByid(roleId);
+        return successOk(role);
+    }
+
     @DeleteMapping("/{roleId}")
     public ResponseEntity<Void> deleteRole(@PathVariable String roleId){
         roleService.deleteRole(roleId);
-        //계층구조 재설정.
-        roleService.setRoleHierarchy();
 
         return successNoContent();
     }

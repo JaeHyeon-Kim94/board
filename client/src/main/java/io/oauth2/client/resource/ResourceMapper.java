@@ -9,11 +9,11 @@ public interface ResourceMapper {
 
     int insert(Resource resource, String roleId);
     int update(Resource resource, String roleId);
-    int delete(String resourceId);
+    int delete(Long resourceId);
     List<Resource> findAll();
-    Resource findById(String resourceId);
+    Resource findById(Long resourceId);
 
     List<Resource> findResources(Long offset, int size);
 
-    int findResourcesCount();
+    long findResourcesCount();
 }

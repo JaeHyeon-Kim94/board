@@ -9,8 +9,6 @@ public interface UserMapper {
 
     User findByUserId(String userId);
 
-    User findByNickname(String nickname);
-
     void insert(@Param("user") User user, @Param("roleId") String roleId);
 
     void update(User user);

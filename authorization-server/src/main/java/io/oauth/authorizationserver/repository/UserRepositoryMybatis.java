@@ -20,11 +20,6 @@ public class UserRepositoryMybatis implements UserRepository{
     }
 
     @Override
-    public User findByNickname(String nickname) {
-        return userMapper.findByNickname(nickname);
-    }
-
-    @Override
     public User insert(User user) {
         Role defaultUserRole = Role.getDefaultUserRole();
         user.getRoles().add(defaultUserRole);

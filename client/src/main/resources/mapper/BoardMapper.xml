@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="io.oauth2.client.board.BoardMapper">
-    <resultMap id="boardWithResource" type="io.oauth2.client.board.Board">
+    <resultMap id="boardWithResourceRole" type="io.oauth2.client.board.Board">
         <id property="id"       column="bo_id"/>
         <result property="category" column="category"/>
         <result property="subject" column="subject"/>
@@ -28,7 +28,7 @@
             category, subject, tb_resource_id
         )
         VALUES(
-            #{category}, #{subject}, #{resourceId}
+            #{board.category}, #{board.subject}, #{resourceId}
         )
     </insert>
 
@@ -43,7 +43,7 @@
     </update>
 
     <delete id="deleteBoard" parameterType="long">
-        DELETE tb_board
+        DELETE FROM tb_board
         WHERE id = #{boardId}
     </delete>
 
@@ -52,12 +52,12 @@
         bo.id,              bo.category,        bo.subject,
         bo.reg_date,        bo.mod_date,
         re.id,              re.resource_type,   re.resource_level,
-        re.resource_value,  resource_http_method
+        re.resource_value,  resource_http_method,
         ro.id,              ro.role_desc,       ro.role_name
         FROM
         tb_board AS bo
-        INNER JOIN tb_resource AS re ON bo.tb_resource_id = re.id
-        INNER JOIN tb_role     AS ro ON re.tb_role_id = ro.id
+        LEFT OUTER JOIN tb_resource AS re ON bo.tb_resource_id = re.id
+        LEFT OUTER JOIN tb_role     AS ro ON re.tb_role_id = ro.id
     </sql>
 
     <select id="findBoardById" resultMap="boardWithResourceRole" parameterType="long">
@@ -69,6 +69,14 @@
         <include refid="selectBoardWithResourceRoleSql"/>
         WHERE bo.id > #{offset}
         LIMIT #{size}
+    </select>
+
+    <select id="findAll" resultType="io.oauth2.client.board.Board">
+        SELECT id, category, subject FROM tb_board
+    </select>
+
+    <select id="findBoardsCount" resultType="long">
+        SELECT COUNT(*) FROM tb_board;
     </select>
 
 </mapper>

@@ -6,15 +6,15 @@ import java.util.Map;
 
 public interface ResourceRepository {
 
-    Resource addRole(Resource resource, String roleId);
+    Resource addResource(Resource resource, String roleId);
 
-    int updateRole(Resource resource, String roleId);
+    int updateResource(Resource resource, String roleId);
 
-    int deleteResource(String resourceId);
+    int deleteResource(Long resourceId);
 
     List<Resource> findAll();
 
-    Resource findById(String resourceId);
+    Resource findById(Long resourceId);
 
     Map<String, Object> findByResources(Long offset, int size);
 }

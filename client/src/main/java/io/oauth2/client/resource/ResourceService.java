@@ -1,5 +1,6 @@
 package io.oauth2.client.resource;
 
+import io.oauth2.client.resource.dto.ResourceRequestDto;
 import io.oauth2.client.role.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.ConfigAttribute;
@@ -7,7 +8,9 @@ import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -19,7 +22,7 @@ public class ResourceService {
 
     private final ResourceRepository resourceRepository;
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, propagation = Propagation.NESTED)
     public LinkedHashMap<RequestMatcher, List<ConfigAttribute>> getResourceList(){
         LinkedHashMap<RequestMatcher, List<ConfigAttribute>> resources = new LinkedHashMap<>();
         List<Resource> foundResources = resourceRepository.findAll();
@@ -34,17 +37,17 @@ public class ResourceService {
     }
 
     @Transactional
-    public Resource addResource(Resource resource, String roleId){
-        return resourceRepository.addRole(resource, roleId);
+    public Resource addResource(ResourceRequestDto dto){
+        return resourceRepository.addResource(ResourceRequestDto.toResource(dto), dto.getRoleId());
     }
 
     @Transactional
-    public int updateResource(Resource resource, String roleId) {
-        return resourceRepository.updateRole(resource, roleId);
+    public int updateResource(@RequestBody ResourceRequestDto dto) {
+        return resourceRepository.updateResource(ResourceRequestDto.toResource(dto), dto.getRoleId());
     }
 
     @Transactional
-    public int deleteResource(String resourceId) {
+    public int deleteResource(Long resourceId) {
         return resourceRepository.deleteResource(resourceId);
     }
 
@@ -59,7 +62,7 @@ public class ResourceService {
     }
 
     @Transactional(readOnly = true)
-    public Resource findById(String resourceId){
+    public Resource findById(Long resourceId){
         return resourceRepository.findById(resourceId);
     }
 

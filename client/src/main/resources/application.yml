@@ -4,6 +4,9 @@ server:
 spring:
   profiles:
     include: oauth2, data
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
 
 
 custom:
@@ -14,8 +17,3 @@ custom:
     cookie-max-age: 86400 #seconds
     id-token-cookie-name: idt
     reg-id-cookie-name: reg
-
-
-logging:
-  level:
-    root: debug

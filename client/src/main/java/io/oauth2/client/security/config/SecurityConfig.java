@@ -36,7 +36,9 @@ public class SecurityConfig {
 
     private static final String[] PERMIT_ALL_PATTERN
             = new String[]{
-                    "/js/**", "/css/**", "/", "/login", "/boards", "/post", "/api/oauth/**"};
+                    "/js/**", "/css/**", "/", "/login", "/api/boards", "/api/boards/*","/post", "/api/oauth/**"
+                ,   "/swagger-ui.html"
+            };
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomOidcUserService customOidcUserService;
     private final AuthenticationManagerResolver<HttpServletRequest> authenticationManagerResolver;

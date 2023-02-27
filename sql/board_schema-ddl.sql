@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS  `tb_resource`
     `id`                    BIGINT(20)      UNSIGNED AUTO_INCREMENT,
     `resource_type`         VARCHAR(45)     NOT NULL,
     `resource_level`        BIGINT(20)      UNSIGNED NOT NULL,
-    `tb_role_id`            VARCHAR(100)    NOT NULL,
+    `tb_role_id`            VARCHAR(100)    NULL,
     `resource_value`        VARCHAR(200)    NOT NULL,
     `resource_http_method`  VARCHAR(45)     NULL,
     PRIMARY KEY (`id`),
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS  `tb_resource`
     CONSTRAINT `fk_tb_resource_tb_role_id`
     FOREIGN KEY (`tb_role_id`)
         REFERENCES `tb_role` (`id`)
-        ON DELETE RESTRICT
+        ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS `tb_board`
@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS `tb_board`
     `id`                    BIGINT(20)      UNSIGNED AUTO_INCREMENT,
     `category`              VARCHAR(45)     NOT NULL,
     `subject`               VARCHAR(45)     NOT NULL,
-    `tb_resource_id`        BIGINT(20)      UNSIGNED NOT NULL,
+    `tb_resource_id`        BIGINT(20)      UNSIGNED NULL,
     `reg_date`              TIMESTAMP       NULL DEFAULT CURRENT_TIMESTAMP,
     `mod_date`              TIMESTAMP       NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS `tb_board`
     CONSTRAINT `fk_tb_board_tb_resource_id`
     FOREIGN KEY (`tb_resource_id`)
         REFERENCES `tb_resource` (`id`)
-        ON DELETE RESTRICT
+        ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS `tb_board_registration`

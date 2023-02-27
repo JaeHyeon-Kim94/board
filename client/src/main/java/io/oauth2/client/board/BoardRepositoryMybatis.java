@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Repository
@@ -12,7 +13,7 @@ public class BoardRepositoryMybatis implements BoardRepository {
     private final BoardMapper boardMapper;
 
     @Override
-    public Long insert(Board board, Long resourceId) {
+    public Long addBoard(Board board, Long resourceId) {
         boardMapper.insert(board, resourceId);
         return board.getId();
     }
@@ -33,7 +34,14 @@ public class BoardRepositoryMybatis implements BoardRepository {
     }
 
     @Override
-    public List<Board> findBoards(Long offset, int size) {
-        return boardMapper.findBoards(offset, size);
+    public Map<String, Object> findBoards(Long offset, int size) {
+        List<Board> boards = boardMapper.findBoards(offset, size);
+        Long totalCount = boardMapper.findBoardsCount();
+        return Map.of("boards", boards, "totalCount", totalCount);
+    }
+
+    @Override
+    public List<Board> findAll() {
+        return boardMapper.findAll();
     }
 }

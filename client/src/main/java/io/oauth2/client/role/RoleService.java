@@ -1,9 +1,11 @@
 package io.oauth2.client.role;
 
+import io.oauth2.client.role.dto.RoleRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Iterator;
@@ -18,7 +20,7 @@ public class RoleService {
     private final RoleHierarchyImpl roleHierarchy;
     private final RoleRepository roleRepository;
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, propagation = Propagation.NESTED)
     public void setRoleHierarchy(){
         List<Role> roles = roleRepository.findAll();
         Iterator<Role> iterator = roles.iterator();
@@ -43,21 +45,36 @@ public class RoleService {
      * @return put 요청에 대해 insert or update 처리 여부 반환(insert시 true, update시 false)
      */
     @Transactional
-    public boolean putRole(RolePutDto dto){
+    public boolean putRole(RoleRequestDto dto){
+
+        if(!dto.getName().contains("ROLE_")){
+            dto.setName("ROLE_"+dto.getName());
+        }
 
         Role role = roleRepository.findById(dto.getId());
         if(role == null){
-            roleRepository.addRole(RolePutDto.toRole(dto), dto.getParentId());
+            roleRepository.addRole(RoleRequestDto.toRole(dto), dto.getParentId());
             return true;
         }
 
-        roleRepository.updateRole(RolePutDto.toRole(dto), dto.getParentId());
+        roleRepository.updateRole(RoleRequestDto.toRole(dto), dto.getParentId());
+
+        //계층구조 재설정.
+        setRoleHierarchy();
         return false;
     }
 
     @Transactional
     public int deleteRole(String roleId){
-        return roleRepository.deleteRole(roleId);
+        int result = roleRepository.deleteRole(roleId);
+        //계층구조 재설정.
+        setRoleHierarchy();
+        return result;
+    }
+
+    @Transactional
+    public Role findByid(String roleId){
+        return roleRepository.findById(roleId);
     }
 
     @Transactional(readOnly = true)

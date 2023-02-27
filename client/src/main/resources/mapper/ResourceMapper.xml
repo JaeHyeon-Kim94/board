@@ -43,24 +43,24 @@
                 id = #{resource.id}
     </update>
 
-    <delete id="delete">
-        DELETE tb_resource
-        WHERE id = #{id}
+    <delete id="delete" parameterType="Long">
+        DELETE FROM tb_resource
+        WHERE id = #{resourceId}
     </delete>
 
     <sql id="selectResourceWithRoleSql">
         SELECT
         re.id AS re_id,              re.resource_type,       re.resource_level,
-        re.tb_role_id,      re.resource_value,      re.resource_http_method,
+        re.resource_value,      re.resource_http_method,
         ro.id AS ro_id,              ro.role_desc,           ro.role_name
 
         FROM tb_resource AS re
         INNER JOIN tb_role AS ro ON re.tb_role_id = ro.id
     </sql>
 
-    <select id="findById" resultMap="resourceWithRole">
+    <select id="findById" resultMap="resourceWithRole" parameterType="Long">
         <include refid="selectResourceWithRoleSql"/>
-        WHERE re.id = #{id}
+        WHERE re.id = #{resourceId}
     </select>
 
     <select id="findAll" resultMap="resourceWithRole">
@@ -74,7 +74,7 @@
         LIMIT #{offset}, #{size}
     </select>
 
-    <select id="findResourcesCount" resultType="int">
+    <select id="findResourcesCount" resultType="long">
         SELECT COUNT(*) FROM tb_resource;
     </select>
 

@@ -6,6 +6,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.server.resource.BearerTokenError;
 import org.springframework.security.oauth2.server.resource.BearerTokenErrors;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +29,23 @@ public class CustomeBearerTokenResolver implements BearerTokenResolver {
     }
     @Override
     public String resolve(HttpServletRequest request) {
-        return resolveFromCookie(request);
+        String result = resolveFromCookie(request);
+        if(!StringUtils.hasText(result)){
+            result = resolveFromHttpHeader(request);
+        }
+        return result;
+    }
+
+    private String resolveFromHttpHeader(HttpServletRequest request) {
+
+        String authorization = request.getHeader("Authorization");
+        if(authorization == null) return null;
+        Matcher matcher = authorizationPattern.matcher(authorization);
+        if(!matcher.matches()){
+            BearerTokenError error = BearerTokenErrors.invalidToken("Bearer token is malformed");
+            throw new OAuth2AuthenticationException(error);
+        }
+        return matcher.group("token");
     }
 
     private String resolveFromCookie(HttpServletRequest request){

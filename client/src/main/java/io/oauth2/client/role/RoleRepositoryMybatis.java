@@ -18,11 +18,6 @@ public class RoleRepositoryMybatis implements RoleRepository {
     }
 
     @Override
-    public Role findByName(String roleName) {
-        return roleMapper.findByName(roleName);
-    }
-
-    @Override
     public Role findById(String id) {
         return roleMapper.findById(id);
     }

@@ -48,7 +48,7 @@
         <include refid="joinUserWithRoleRelationshipTable"/>
     </select>
 
-    <insert id="addRoleOfUser" parameterType="Map">
+    <insert id="addUserRole" parameterType="Map">
         INSERT INTO tb_user_role(
         tb_role_id, tb_user_user_id
         )
@@ -57,10 +57,10 @@
         )
     </insert>
 
-    <update id="deleteUserRole" parameterType="long">
-        DELETE tb_user_role
+    <update id="deleteUserRole" parameterType="map">
+        DELETE FROM tb_user_role
         WHERE
-        tb_user_user_id = #{userId}
+        tb_user_user_id = #{userId} AND tb_role_id = #{roleId}
     </update>
 
     <select id="findUsers" resultMap="userWithRolesResultMap" parameterType="Map">

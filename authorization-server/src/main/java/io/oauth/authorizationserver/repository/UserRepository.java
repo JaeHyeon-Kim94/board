@@ -5,8 +5,6 @@ import io.oauth.authorizationserver.web.domain.User;
 public interface UserRepository {
     User findByUserId(String userId);
 
-    User findByNickname(String nickname);
-
     User insert(User user);
 
     void update(User user);

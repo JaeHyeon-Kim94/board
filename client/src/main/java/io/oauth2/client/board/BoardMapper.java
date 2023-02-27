@@ -17,4 +17,7 @@ public interface BoardMapper {
 
     List<Board> findBoards(Long offset, int size);
 
+    List<Board> findAll();
+
+    Long findBoardsCount();
 }

@@ -2,15 +2,18 @@ package io.oauth2.client.board;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.oauth2.client.board.dto.BoardDto;
+import io.oauth2.client.board.dto.BoardCreateDto;
+import io.oauth2.client.board.dto.BoardUpdateDto;
 import io.oauth2.client.web.page.Pageable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
 
 import static io.oauth2.client.web.utils.ApiUtils.*;
 
@@ -25,18 +28,14 @@ public class BoardRestController {
     private final BoardService boardService;
 
     @PostMapping
-    public ResponseEntity<Void> addBoard(@RequestBody String board) throws JsonProcessingException, URISyntaxException {
-        BoardDto dto = objectMapper.readValue(board, BoardDto.class);
-        Long boardId = boardService.addBoard(BoardDto.toBoard(dto), dto.getResourceId());
-
+    public ResponseEntity<Void> addBoard(@RequestBody @Validated BoardCreateDto board) throws JsonProcessingException, URISyntaxException {
+        Long boardId = boardService.addBoard(board);
         return successCreated(DEFAULT_PATH+boardId);
     }
 
     @PutMapping("/{boardId}")
-    public ResponseEntity<Void> updateBoard(@RequestBody String board, @PathVariable Long boardId) throws JsonProcessingException {
-        BoardDto dto = objectMapper.readValue(board, BoardDto.class);
-        dto.setId(boardId);
-        boardService.updateBoard(BoardDto.toBoard(dto), dto.getResourceId());
+    public ResponseEntity<Void> updateBoard(@RequestBody @Validated BoardUpdateDto board, @PathVariable Long boardId) throws JsonProcessingException {
+        boardService.updateBoard(board);
 
         return successNoContent();
     }
@@ -49,16 +48,21 @@ public class BoardRestController {
     }
 
     @GetMapping("/{boardId}")
-    public ResponseEntity<String> findByBoardId(@PathVariable Long boardId) throws JsonProcessingException {
+    public ResponseEntity<Board> findByBoardId(@PathVariable Long boardId) throws JsonProcessingException {
         Board board = boardService.findByBoardId(boardId);
 
-        return successOk(objectMapper.writeValueAsString(board));
+        return successOk(board);
     }
 
     @GetMapping
-    public ResponseEntity<String> findBoards(Pageable pageable) throws JsonProcessingException {
-        List<Board> boards = boardService.findBoards(pageable.getOffset(), pageable.getSize());
+    public ResponseEntity<Map<String, Object>> findBoards(Pageable pageable) throws JsonProcessingException {
+        Map<String, Object> result = null;
+        if(pageable == null){
+            result = Map.of("boards", boardService.findAll());
+        }else {
+            result = boardService.findBoards(pageable.getOffset(), pageable.getSize());
+        }
 
-        return successOk(objectMapper.writeValueAsString(boards));
+        return successOk(result);
     }
 }

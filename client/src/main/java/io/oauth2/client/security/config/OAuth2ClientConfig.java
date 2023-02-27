@@ -25,7 +25,6 @@ import org.springframework.security.oauth2.client.*;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.*;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
-import org.springframework.security.oauth2.server.resource.authentication.JwtIssuerAuthenticationManagerResolver;
 
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,7 +37,7 @@ public class OAuth2ClientConfig {
     private final JdbcTemplate jdbcTemplate;
     private final JwtProperties jwtProperties;
 
-    private final ResourceService securityResourceService;
+    private final ResourceService resourceService;
     private final UrlResourcesMapFactoryBean urlResourceMapFactoryBean;
 
 
@@ -111,7 +110,7 @@ public class OAuth2ClientConfig {
 
     @Bean
     public UrlFilterInvocationSecurityMetadataSource urlFilterInvocationSecurityMetadataSource() throws Exception {
-        return new UrlFilterInvocationSecurityMetadataSource(urlResourceMapFactoryBean.getObject(), securityResourceService);
+        return new UrlFilterInvocationSecurityMetadataSource(urlResourceMapFactoryBean.getObject(), resourceService);
     }
 
     @Bean
