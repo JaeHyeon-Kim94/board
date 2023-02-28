@@ -1,8 +1,10 @@
 package io.oauth2.client.role;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import io.oauth2.client.BaseTest;
 import io.oauth2.client.resource.Resource;
 import io.oauth2.client.role.dto.RoleRequestDto;
+import io.oauth2.client.security.WithMockCustomUser;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,36 +14,42 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.http.*;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@AutoConfigureMockMvc
+@SpringBootTest
+public class RoleTest extends BaseTest {
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-@Transactional
-@AutoConfigureMockMvc(addFilters = false)
-public class RoleRestControllerTest {
-
+    static RoleRequestDto parent;
+    static RoleRequestDto child;
     @Autowired
-    MockMvc mvc;
-    @Autowired
-    ObjectMapper om;
+    WebApplicationContext context;
 
-    RoleRequestDto parent;
-    RoleRequestDto child;
-    String url = "/api/roles";
+    public RoleTest() {
+        header = new HttpHeaders();
+        header.setContentType(MediaType.APPLICATION_JSON);
+        header.setAccept(List.of(MediaType.APPLICATION_JSON));
+        url = "/api/roles";
+//        mvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
+    }
 
-
-    @BeforeEach
+    @DisplayName("Role 등록 테스트 - 인가 성공")
+    @WithMockCustomUser(role = "ROLE_ADMIN")
+    @Test
     void beforeEach() throws Exception {
         parent = RoleRequestDto.builder()
                 .id("U_1111")
@@ -58,6 +66,7 @@ public class RoleRestControllerTest {
 
 
         mvc.perform(put(url+ "/" + parent.getId())
+                        .with(jwt().authorities(new SimpleGrantedAuthority("ROLE_ADMIN")))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(om.writeValueAsBytes(parent)))
@@ -66,6 +75,7 @@ public class RoleRestControllerTest {
 
 
         mvc.perform(put(url+ "/" + child.getId())
+                        .with(jwt().authorities(new SimpleGrantedAuthority("ROLE_ADMIN")))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsBytes(child)))

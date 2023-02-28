@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.authentication.AuthenticationManagerResolver;
@@ -29,6 +30,8 @@ import org.springframework.security.web.access.intercept.FilterSecurityIntercept
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 @Slf4j
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -98,9 +101,10 @@ public class SecurityConfig {
                 .exceptionHandling( exceptionHandlingConfigurer ->
                         exceptionHandlingConfigurer
                             .accessDeniedHandler((request, response, accessDeniedException)
-                                    -> response.sendRedirect("/"))
+                                    -> response.sendError(HttpServletResponse.SC_FORBIDDEN, "접근 권한이 없습니다."))
                             .authenticationEntryPoint((request, response, authException)
-                                    -> response.sendRedirect("/")));
+                                    -> response.sendRedirect("/login"))
+                );
 
         http.sessionManagement( sessionConfigurer -> sessionConfigurer
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

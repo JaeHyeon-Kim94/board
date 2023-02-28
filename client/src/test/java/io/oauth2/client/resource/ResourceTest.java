@@ -1,21 +1,19 @@
 package io.oauth2.client.resource;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import io.oauth2.client.BaseTest;
 import io.oauth2.client.resource.dto.ResourceRequestDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -26,18 +24,16 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-@Transactional
-@AutoConfigureMockMvc(addFilters = false)
-public class ResourceRestControllerTest {
-    @Autowired
-    MockMvc mvc;
-    @Autowired
-    ObjectMapper om;
-
+@SpringBootTest
+@AutoConfigureMockMvc
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class ResourceTest extends BaseTest {
     ResourceRequestDto requestDto;
     String url = "/api/resources";
     Long id;
+
+    @MockBean
+    ResourceService resourceService;
 
     @BeforeEach
     void before() throws Exception {

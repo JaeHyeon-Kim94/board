@@ -1,19 +1,11 @@
-server:
-  port: 8080
-
 spring:
-  profiles:
-    include: oauth2, data
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+  profiles:
+    group:
+      dev: oauth2,data
+server:
+  port: 8080
 
 
-custom:
-  jwt:
-    trusted-issuerUri:
-      - http://127.0.0.1:9000
-      - http://127.0.0.1:9001
-    cookie-max-age: 86400 #seconds
-    id-token-cookie-name: idt
-    reg-id-cookie-name: reg

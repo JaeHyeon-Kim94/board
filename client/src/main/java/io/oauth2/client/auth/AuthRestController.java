@@ -13,12 +13,11 @@ import java.net.URISyntaxException;
 @RequestMapping("/api/oauth")
 public class AuthRestController {
 
-    @Value("${spring.security.oauth2.client.provider.simpleOAuth.issuer-uri}")
-    private String issuerLocation;
+    private static final String AUTH_URI = "http://127.0.0.1:9001/oauth2/authorization/";
 
     @GetMapping("/{providerId}")
     public ResponseEntity<Void> oauth2Login(@PathVariable String providerId) throws URISyntaxException {
-        return ApiUtils.redirectSeeOther(issuerLocation+"/oauth2/authorization/"+providerId);
+        return ApiUtils.redirectSeeOther(AUTH_URI+providerId);
     }
 
 }
