@@ -40,10 +40,12 @@
     </delete>
 
     <select id="findById" resultMap="rolesWithParentResultMap">
-        SELECT id, role_desc, role_name
+        SELECT c.id AS c_id,    c.role_desc AS c_role_desc, c.role_name AS c_role_name,
+        p.id AS p_id,    p.role_desc AS p_role_desc, p.role_name AS p_role_name
         FROM
-        tb_role
-        WHERE id = #{roleId}
+        tb_role AS c
+        LEFT OUTER JOIN tb_role AS p ON c.parent_id = p.id
+        WHERE c.id = #{roleId}
     </select>
 
     <select id="findAll" resultMap="rolesWithParentResultMap">

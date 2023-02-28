@@ -2,13 +2,19 @@ package io.oauth2.client.resource.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.oauth2.client.resource.Resource;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 //for Create, Update
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ResourceRequestDto {
 
     private Long id;

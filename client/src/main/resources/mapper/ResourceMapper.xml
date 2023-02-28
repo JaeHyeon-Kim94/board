@@ -74,7 +74,7 @@
         LIMIT #{offset}, #{size}
     </select>
 
-    <select id="findResourcesCount" resultType="long">
+    <select id="findResourcesCount" resultType="Long">
         SELECT COUNT(*) FROM tb_resource;
     </select>
 

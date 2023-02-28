@@ -37,7 +37,7 @@ public class ResourceRepositoryMybatis implements ResourceRepository {
     @Override
     public Map<String, Object> findByResources(Long offset, int size) {
         List<Resource> resources = resourceMapper.findResources(offset, size);
-        long totalCount = resourceMapper.findResourcesCount();
+        Long totalCount = resourceMapper.findResourcesCount();
 
         return Map.of("resources", resources, "totalCount", totalCount);
     }

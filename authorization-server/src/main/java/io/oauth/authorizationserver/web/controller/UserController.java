@@ -22,6 +22,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
+import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.spec.InvalidKeySpecException;
@@ -35,10 +36,12 @@ public class UserController {
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
+    private final KeyPair keyPair;
 
-    public UserController(UserService userService, PasswordEncoder passwordEncoder) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public UserController(UserService userService, PasswordEncoder passwordEncoder, KeyPair keyPair) throws NoSuchAlgorithmException, InvalidKeySpecException {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
+        this.keyPair = keyPair;
     }
 
 
@@ -108,7 +111,7 @@ public class UserController {
     }
 
     private void setModelAndSessionRsaKey(Model model, HttpSession session) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        Map<String, Object> keys = RSAUtil.getRSAKeys();
+        Map<String, Object> keys = RSAUtil.getRSAKeys(keyPair);
 
         model.addAttribute("modulus", (String)keys.get("modulus"));
         model.addAttribute("exponent", (String)keys.get("exponent"));

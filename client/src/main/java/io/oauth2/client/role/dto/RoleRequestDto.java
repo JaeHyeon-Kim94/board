@@ -1,8 +1,14 @@
 package io.oauth2.client.role.dto;
 
 import io.oauth2.client.role.Role;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Data
 public class RoleRequestDto {
     private String id;

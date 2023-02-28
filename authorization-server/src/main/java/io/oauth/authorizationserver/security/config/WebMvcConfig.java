@@ -6,9 +6,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.RSAPublicKeySpec;
 
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
@@ -18,7 +18,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public KeyPair keyPairForLoginAndJoin() throws NoSuchAlgorithmException {
+    public KeyPair keyPairForLoginAndJoin() throws NoSuchAlgorithmException, InvalidKeySpecException {
         KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
         generator.initialize(2048);
         KeyPair keyPair = generator.generateKeyPair();

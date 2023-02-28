@@ -14,16 +14,12 @@ import java.util.Map;
 
 public class RSAUtil {
 
-    public static Map<String, Object> getRSAKeys() throws NoSuchAlgorithmException, InvalidKeySpecException {
-        KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
-        generator.initialize(2048);
-
-        KeyPair keyPair = generator.generateKeyPair();
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+    public static Map<String, Object> getRSAKeys(KeyPair keyPair) throws NoSuchAlgorithmException, InvalidKeySpecException {
 
         PrivateKey privateKey = keyPair.getPrivate();
         PublicKey publicKey = keyPair.getPublic();
 
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         RSAPublicKeySpec publicSpec = keyFactory.getKeySpec(publicKey, RSAPublicKeySpec.class);
         String modulus = publicSpec.getModulus().toString(16);
         String exponent = publicSpec.getPublicExponent().toString(16);
