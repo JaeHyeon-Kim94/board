@@ -112,7 +112,7 @@ public class RoleTest extends BaseTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        Role result = mapJsonToObject(mvcResult.getResponse().getContentAsString(), Role.class);
+        Role result = om.readValue(mvcResult.getResponse().getContentAsString(), Role.class);
         Role parentResult = result.getParent();
 
         assertThat(result.getId()).isEqualTo(child.getId());
@@ -138,7 +138,7 @@ public class RoleTest extends BaseTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        Map result = mapJsonToObject(findWithOffsetSize.getResponse().getContentAsString(), Map.class);
+        Map result = om.readValue(findWithOffsetSize.getResponse().getContentAsString(), Map.class);
 
         List<Resource> resources = (List<Resource>) result.get("roles");
         Integer totalCount = (Integer) result.get("totalCount");
@@ -151,7 +151,7 @@ public class RoleTest extends BaseTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        result = mapJsonToObject(findAll.getResponse().getContentAsString(), Map.class);
+        result = om.readValue(findAll.getResponse().getContentAsString(), Map.class);
         resources = (List<Resource>) result.get("roles");
 
         assertThat(resources.size()).isEqualTo(totalCount);

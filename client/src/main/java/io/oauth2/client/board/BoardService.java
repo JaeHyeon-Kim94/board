@@ -42,9 +42,10 @@ public class BoardService {
     }
 
     @Transactional
-    public int updateBoard(BoardUpdateDto dto){
+    public void updateBoard(BoardUpdateDto dto, Long boardId){
         Board board = BoardUpdateDto.toBoard(dto);
-        return boardRepository.updateBoard(board, dto.getResourceId());
+        board.setId(boardId);
+        boardRepository.updateBoard(board, dto.getResourceId());
     }
 
     @Transactional
@@ -63,8 +64,7 @@ public class BoardService {
 
     @Transactional(readOnly = true)
     public Board findByBoardId(Long boardId){
-        Board board = boardRepository.findBoardById(boardId);
-        return board;
+        return boardRepository.findBoardById(boardId);
     }
 
     @Transactional(readOnly = true)

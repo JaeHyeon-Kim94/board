@@ -26,11 +26,10 @@ public class BoardResourceRoleService {
     }
 
     @Transactional
-    public int reloadRoleAndResourcesAfterUpdateBoard(BoardUpdateDto dto){
-        int result = boardService.updateBoard(dto);
+    public void reloadRoleAndResourcesAfterUpdateBoard(BoardUpdateDto dto, Long boardId){
+        boardService.updateBoard(dto, boardId);
         roleService.setRoleHierarchy();
         urlFilterInvocationSecurityMetadataSource.reload();
-        return result;
     }
 
     @Transactional

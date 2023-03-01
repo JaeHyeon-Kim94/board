@@ -58,7 +58,7 @@ public class ResourceService {
 
     @Transactional(readOnly = true)
     public Map<String, Object> findResources(Long offset, int size) {
-        return resourceRepository.findByResources(offset, size);
+        return resourceRepository.findResources(offset, size);
     }
 
     @Transactional(readOnly = true)

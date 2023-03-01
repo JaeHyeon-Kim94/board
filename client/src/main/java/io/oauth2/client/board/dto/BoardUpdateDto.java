@@ -1,27 +1,32 @@
 package io.oauth2.client.board.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.oauth2.client.board.Board;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Data
 public class BoardUpdateDto {
-    private Long id;
     @NotBlank
+    @Length(max = 45)
     private String category;
     @NotBlank
+    @Length(max = 45)
     private String subject;
-    @JsonProperty("resource_id")
     private Long resourceId;
 
     public static Board toBoard(BoardUpdateDto dto){
         return Board.builder()
-                .id(dto.getId())
                 .category(dto.getCategory())
                 .subject(dto.getSubject())
-                    .build();
+                        .build();
     }
+
 }

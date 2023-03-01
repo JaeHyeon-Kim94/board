@@ -1,7 +1,5 @@
 package io.oauth2.client.board;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.oauth2.client.board.dto.BoardCreateDto;
 import io.oauth2.client.board.dto.BoardUpdateDto;
 import io.oauth2.client.web.page.Pageable;
@@ -23,39 +21,39 @@ import static io.oauth2.client.web.utils.ApiUtils.*;
 public class BoardRestController {
 
     private static final String DEFAULT_PATH = "/api/boards/";
-    private final ObjectMapper objectMapper;
+    private final BoardResourceRoleService boardResourceRoleService;
     private final BoardService boardService;
 
     @PostMapping
-    public ResponseEntity<Void> addBoard(@RequestBody @Validated BoardCreateDto board) throws JsonProcessingException, URISyntaxException {
-        Long boardId = boardService.addBoard(board);
+    public ResponseEntity<Void> addBoard(@RequestBody @Validated BoardCreateDto board) throws URISyntaxException {
+        Long boardId = boardResourceRoleService.reloadRoleAndResourcesAfterAddBoard(board);
         return successCreated(DEFAULT_PATH+boardId);
     }
 
     @PutMapping("/{boardId}")
-    public ResponseEntity<Void> updateBoard(@RequestBody @Validated BoardUpdateDto board, @PathVariable Long boardId) throws JsonProcessingException {
-        boardService.updateBoard(board);
+    public ResponseEntity<Void> updateBoard(@RequestBody @Validated BoardUpdateDto board, @PathVariable Long boardId) {
+        boardResourceRoleService.reloadRoleAndResourcesAfterUpdateBoard(board, boardId);
 
         return successNoContent();
     }
 
     @DeleteMapping("/{boardId}")
     public ResponseEntity<Void> deleteBoard(@PathVariable Long boardId){
-        boardService.deleteBoard(boardId);
+        boardResourceRoleService.reloadRoleAndResourcesAfterDeleteBoard(boardId);
 
         return successNoContent();
     }
 
     @GetMapping("/{boardId}")
-    public ResponseEntity<Board> findByBoardId(@PathVariable Long boardId) throws JsonProcessingException {
+    public ResponseEntity<Board> findByBoardId(@PathVariable Long boardId) {
         Board board = boardService.findByBoardId(boardId);
 
         return successOk(board);
     }
 
     @GetMapping
-    public ResponseEntity<Map<String, Object>> findBoards(Pageable pageable) throws JsonProcessingException {
-        Map<String, Object> result = null;
+    public ResponseEntity<Map<String, Object>> findBoards(Pageable pageable) {
+        Map<String, Object> result;
         if(pageable == null){
             result = Map.of("boards", boardService.findAll());
         }else {
@@ -75,7 +73,7 @@ public class BoardRestController {
     //TODO
     @PostMapping("/{category}/{subject}/management")
     public ResponseEntity<String> manageBoard(@PathVariable String category, @PathVariable String subject, @RequestBody String manageContent){
-        return successOk("TODO board Management(either manager, admin)");
+        return successOk(manageContent);
     }
 
 }

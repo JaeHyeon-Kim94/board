@@ -44,12 +44,14 @@ CREATE TABLE IF NOT EXISTS tb_user_role
     CONSTRAINT `fk_tb_user_role_id`
         FOREIGN KEY (`tb_role_id`)
             REFERENCES  `tb_role` (`id`)
+            ON UPDATE CASCADE
             ON DELETE CASCADE,
 
     INDEX `idx_fk_tb_user_role_user_id` (`tb_user_user_id` ASC),
     CONSTRAINT `fk_tb_user_role_user_id`
         FOREIGN KEY (`tb_user_user_id`)
             REFERENCES  `tb_user` (`user_id`)
+            ON UPDATE CASCADE
             ON DELETE CASCADE
 );
 
@@ -69,6 +71,7 @@ CREATE TABLE IF NOT EXISTS  `tb_resource`
     CONSTRAINT `fk_tb_resource_tb_role_id`
     FOREIGN KEY (`tb_role_id`)
         REFERENCES `tb_role` (`id`)
+        ON UPDATE CASCADE
         ON DELETE SET NULL
 );
 

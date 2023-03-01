@@ -16,5 +16,5 @@ public interface ResourceRepository {
 
     Resource findById(Long resourceId);
 
-    Map<String, Object> findByResources(Long offset, int size);
+    Map<String, Object> findResources(Long offset, int size);
 }

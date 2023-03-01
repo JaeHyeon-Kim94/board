@@ -4,12 +4,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.oauth2.client.board.Board;
 import io.oauth2.client.resource.Resource;
 import io.oauth2.client.role.Role;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Data
 public class BoardCreateDto {
     @NotBlank
@@ -29,10 +35,14 @@ public class BoardCreateDto {
         return Board.builder()
                 .category(dto.getCategory())
                 .subject(dto.getSubject())
+                .resource(BoardResource.toResource(dto.getResource()))
+                .role(BoardRole.toRole(dto.getRole()))
                         .build();
     }
 
-
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
     @Data
     public static class BoardResource{
         @NotBlank
@@ -51,12 +61,18 @@ public class BoardCreateDto {
         }
     }
 
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
     @Data
     public static class BoardRole{
+        @NotNull
         private String id;
         @JsonProperty("parent_id")
         private String parentId;
+
         private String description;
+        @NotNull
         private String name;
 
         public static Role toRole(BoardRole dto){

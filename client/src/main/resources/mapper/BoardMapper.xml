@@ -17,9 +17,9 @@
             <result property="httpMethod" column="resource_http_method"/>
         </association>
         <association property="role" javaType="io.oauth2.client.role.Role">
-            <id property="id"               column="ro.id"/>
-            <result property="description"  column="ro.role_desc"/>
-            <result property="name"         column="ro.role_name"/>
+            <id property="id"               column="ro_id"/>
+            <result property="description"  column="role_desc"/>
+            <result property="name"         column="role_name"/>
         </association>
     </resultMap>
 
@@ -37,7 +37,7 @@
         SET
                 category    =   #{board.category},
                 subject     =   #{board.subject},
-                tb_resource_id = #{resourceId}
+                tb_resource_id = #{resourceId, jdbcType=BIGINT}
         WHERE
             id = #{board.id}
     </update>
@@ -49,11 +49,11 @@
 
     <sql id="selectBoardWithResourceRoleSql">
         SELECT
-        bo.id,              bo.category,        bo.subject,
-        bo.reg_date,        bo.mod_date,
-        re.id,              re.resource_type,   re.resource_level,
-        re.resource_value,  resource_http_method,
-        ro.id,              ro.role_desc,       ro.role_name
+        bo.id AS bo_id,              bo.category,        bo.subject,
+        bo.reg_date,                 bo.mod_date,
+        re.id AS re_id,              re.resource_type,   re.resource_level,
+        re.resource_value,           resource_http_method,
+        ro.id AS ro_id,              ro.role_desc,       ro.role_name
         FROM
         tb_board AS bo
         LEFT OUTER JOIN tb_resource AS re ON bo.tb_resource_id = re.id

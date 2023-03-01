@@ -74,6 +74,7 @@ CREATE TABLE IF NOT EXISTS  `tb_resource`
     CONSTRAINT `fk_tb_resource_tb_role_id`
         FOREIGN KEY (`tb_role_id`)
             REFERENCES `tb_role` (`id`)
+            ON UPDATE CASCADE
             ON DELETE SET NULL
 );
 

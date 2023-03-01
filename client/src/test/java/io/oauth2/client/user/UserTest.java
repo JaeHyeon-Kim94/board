@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Transactional
 @SpringBootTest
-public class UserRestControllerTest extends BaseTest {
+public class UserTest extends BaseTest {
 
     private static final String BASE_URL = "/api/users";
 
@@ -76,7 +76,7 @@ public class UserRestControllerTest extends BaseTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        User user = mapJsonToObject(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8), User.class);
+        User user = om.readValue(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8), User.class);
         Set<Role> roles = user.getRoles();
         Role role = (Role)roles.toArray()[0];
         assertThat(user.getUserId()).isEqualTo("user");
@@ -107,7 +107,7 @@ public class UserRestControllerTest extends BaseTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        Map result = mapJsonToObject(findWithOffsetSize.getResponse().getContentAsString(), Map.class);
+        Map result = om.readValue(findWithOffsetSize.getResponse().getContentAsString(StandardCharsets.UTF_8), Map.class);
 
         List<User> users = (List<User>) result.get("users");
         Integer totalCount = (Integer) result.get("totalCount");
@@ -120,7 +120,7 @@ public class UserRestControllerTest extends BaseTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        result = mapJsonToObject(findAll.getResponse().getContentAsString(StandardCharsets.UTF_8), Map.class);
+        result = om.readValue(findAll.getResponse().getContentAsString(StandardCharsets.UTF_8), Map.class);
         users = (List<User>) result.get("users");
 
         assertThat(users.size()).isEqualTo(totalCount);

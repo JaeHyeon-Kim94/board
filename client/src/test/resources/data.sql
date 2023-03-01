@@ -24,3 +24,9 @@ VALUES('user', 'myOAuth', '{noop}1234', 'USER 성명', 'USER 닉네임', '010-00
 
 INSERT INTO tb_user_role(tb_role_id, tb_user_user_id)
 VALUES ('U_0000', 'user');
+
+INSERT INTO tb_user (user_id, provider_id, password, fullname, nickname, phone, email, birth)
+VALUES('test_manager', 'myOAuth', '{noop}1234', 'TEST_MANAGER 성명', 'TEST_MANAGER 닉네임', '010-0000-0000', 'testmanager@email.com', '1999-09-09');
+
+INSERT INTO tb_user_role (tb_role_id, tb_user_user_id)
+VALUES('U_0000', 'test_manager')
