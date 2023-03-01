@@ -20,12 +20,8 @@ public class CustomeBearerTokenResolver implements BearerTokenResolver {
     private static final String REDIRECT_ATTRIBUTE_FLASH_MAP = "org.springframework.web.servlet.DispatcherServlet.INPUT_FLASH_MAP";
     private final JwtProperties jwtProperties;
 
-
-    private final OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
-
-    public CustomeBearerTokenResolver(JwtProperties jwtProperties, OAuth2AuthorizedClientService oAuth2AuthorizedClientService) {
+    public CustomeBearerTokenResolver(JwtProperties jwtProperties) {
         this.jwtProperties = jwtProperties;
-        this.oAuth2AuthorizedClientService = oAuth2AuthorizedClientService;
     }
     @Override
     public String resolve(HttpServletRequest request) {

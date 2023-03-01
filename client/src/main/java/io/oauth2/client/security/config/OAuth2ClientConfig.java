@@ -135,7 +135,7 @@ public class OAuth2ClientConfig {
 
     @Bean
     public CustomeBearerTokenResolver customeBearerTokenResolver(OAuth2AuthorizedClientService oAuth2AuthorizedClientService){
-        return new CustomeBearerTokenResolver(jwtProperties, oAuth2AuthorizedClientService);
+        return new CustomeBearerTokenResolver(jwtProperties);
     }
 
 }
