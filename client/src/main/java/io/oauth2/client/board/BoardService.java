@@ -32,6 +32,7 @@ public class BoardService {
         userRepository.addUserRole(dto.getUserId(), role.getId());
 
         Resource resource = BoardCreateDto.BoardResource.toResource(dto.getResource());
+        resource.setValue("/api/boards/"+dto.getCategory()+"/"+dto.getSubject()+"/management");
         resourceRepository.addResource(resource, role.getId());
 
         Board board = BoardCreateDto.toBoard(dto);

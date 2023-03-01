@@ -2,18 +2,18 @@ package io.oauth2.client.resource;
 
 import io.oauth2.client.BaseTest;
 import io.oauth2.client.resource.dto.ResourceRequestDto;
+import io.oauth2.client.security.WithMockCustomUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -24,69 +24,65 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
 @AutoConfigureMockMvc
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Transactional
+@SpringBootTest
 class ResourceTest extends BaseTest {
-    ResourceRequestDto requestDto;
-    String url = "/api/resources";
-    Long id;
-
-    @MockBean
-    ResourceService resourceService;
-
-    @BeforeEach
-    void before() throws Exception {
-        requestDto = ResourceRequestDto.builder()
-                .type("url")
+    private static final ResourceRequestDto requestDto
+            = ResourceRequestDto.builder()
+                .type("BASE_URL")
                 .level(1111L)
                 .roleId("U_0000")
                 .value("/api/test")
                 .httpMethod(null)
                 .build();
+    private static final String BASE_URL = "/api/resources";
+    Long id;
 
+    @BeforeEach
+    @WithMockCustomUser(role = "ROLE_ADMIN")
+    void before() throws Exception {
 
         String resource = om.writeValueAsString(requestDto);
 
-        mvc.perform(post(url)
+        mvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .content(resource))
                 .andExpect(result ->
                         id = Long.valueOf(result.getResponse()
-                                .getHeader("Location")
-                                .replace("/api/resources/", "")));
+                                            .getHeader("Location")
+                                            .replace("/api/resources/", "")));
     }
 
 
-    @Test
     @DisplayName("Resource 수정 테스트")
+    @WithMockCustomUser(role = "ROLE_ADMIN")
+    @Test
     void updateTest() throws Exception {
         //given
         ResourceRequestDto dto = ResourceRequestDto.builder()
-                .type("modified Type")
+                .type("url modified")
                 .level(999L)
                 .roleId("M_0000")
-                .value("modified Value")
+                .value("/api/test-modified")
                 .build();
 
         //when
-        mvc.perform(put(url+"/"+id)
+        mvc.perform(put(BASE_URL +"/"+id)
                 .content(om.writeValueAsBytes(dto))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
     }
 
-    @Test
     @DisplayName("Resource 한 건 조회 테스트")
+    @WithMockCustomUser(role = "ROLE_ADMIN")
+    @Test
     void selectOneTest() throws Exception{
-        //given
-        requestDto.setId(id);
-
         //when
-        MvcResult mvcResult = mvc.perform(get(url + "/" + id)
+        MvcResult mvcResult = mvc.perform(get(BASE_URL + "/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -101,12 +97,16 @@ class ResourceTest extends BaseTest {
         assertThat(requestDto.getValue()).isEqualTo(resource.getValue());
     }
 
-    @ParameterizedTest
-    @MethodSource("offsetAndSizeValues")
+
     @DisplayName("Resource 리스트 조회 테스트")
-    void selectList(long offset, int size) throws Exception{
+    @MethodSource("offsetAndSizeValues")
+    @WithMockCustomUser(role = "ROLE_ADMIN")
+    @ParameterizedTest
+    void selectList(String offset,String size) throws Exception{
         //when
-        MvcResult findWithOffsetSize = mvc.perform(get(url+"?offset="+offset+"&size="+size)
+        MvcResult findWithOffsetSize = mvc.perform(get(BASE_URL)
+                        .param("offset", offset)
+                        .param("size", size)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -118,7 +118,7 @@ class ResourceTest extends BaseTest {
         assertThat(totalCount).isGreaterThanOrEqualTo(resources.size());
 
         //모두 조회
-        MvcResult findAll = mvc.perform(get(url)
+        MvcResult findAll = mvc.perform(get(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -132,15 +132,16 @@ class ResourceTest extends BaseTest {
 
     private static Stream offsetAndSizeValues(){
         return Stream.of(
-                Arguments.of(0L, 5)
+                Arguments.of("0", "5")
         );
     }
 
-    @Test
     @DisplayName("Resource 삭제 테스트")
+    @WithMockCustomUser(role = "ROLE_ADMIN")
+    @Test
     void deleteTest() throws Exception{
         //when
-        mvc.perform(delete(url+"/"+id)
+        mvc.perform(delete(BASE_URL +"/"+id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());

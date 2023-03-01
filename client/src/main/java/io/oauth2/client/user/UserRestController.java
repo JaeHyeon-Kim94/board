@@ -4,11 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.oauth2.client.web.page.Pageable;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 import static io.oauth2.client.web.utils.ApiUtils.successNoContent;
@@ -23,14 +21,12 @@ public class UserRestController {
     private final ObjectMapper objectMapper;
 
     @GetMapping
-    public ResponseEntity<String> getUsers(Pageable pageable) throws JsonProcessingException {
-        String result = null;
+    public ResponseEntity<Map<String, Object>> getUsers(Pageable pageable) throws JsonProcessingException {
+        Map<String, Object> result = null;
         if(pageable == null){
-            List<User> users = userService.findAll();
-            result = objectMapper.writeValueAsString(users);
+            result = Map.of("users", userService.findAll());
         }else {
-            Map<String, Object> usersWithTotalCount = userService.findUsers(pageable.getOffset(), pageable.getSize());
-            result = objectMapper.writeValueAsString(usersWithTotalCount);
+            result = userService.findUsers(pageable.getOffset(), pageable.getSize());
         }
 
         return successOk(result);

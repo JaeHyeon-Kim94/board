@@ -17,4 +17,10 @@ INSERT INTO tb_resource (resource_type, resource_level, tb_role_id, resource_val
 VALUES ('url', 3000, 'A_0000', '/api/boards*/**', null);
 
 INSERT INTO tb_resource (resource_type, resource_level, tb_role_id, resource_value, resource_http_method)
-VALUES ('url', 3100, 'U_0000', '/api/boards*/**', 'GET');
+VALUES ('url', 4000, 'A_0000', '/api/users*/**', null);
+
+INSERT INTO tb_user (user_id, provider_id, password, fullname, nickname, phone, email, birth)
+VALUES('user', 'myOAuth', '{noop}1234', 'USER 성명', 'USER 닉네임', '010-0000-0000', 'user@email.com', '1999-09-09');
+
+INSERT INTO tb_user_role(tb_role_id, tb_user_user_id)
+VALUES ('U_0000', 'user');

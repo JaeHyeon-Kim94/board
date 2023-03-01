@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.authentication.AuthenticationManagerResolver;
@@ -39,8 +38,7 @@ public class SecurityConfig {
 
     private static final String[] PERMIT_ALL_PATTERN
             = new String[]{
-                    "/js/**", "/css/**", "/", "/login", "/api/boards", "/api/boards/*","/post", "/api/oauth/**"
-                ,   "/swagger-ui.html"
+                   "/", "/login", "/api/oauth/**", "/swagger-ui.html", "/api/boards/*/*"
             };
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomOidcUserService customOidcUserService;

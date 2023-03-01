@@ -1,3 +1,8 @@
+DROP TABLE IF EXISTS tb_user;
+DROP TABLE IF EXISTS tb_role;
+DROP TABLE IF EXISTS tb_resource;
+DROP TABLE IF EXISTS tb_board;
+
 CREATE TABLE IF NOT EXISTS tb_user
 (
     `user_id`         VARCHAR(100) NOT NULL,
@@ -88,40 +93,6 @@ CREATE TABLE IF NOT EXISTS `tb_board`
             ON DELETE SET NULL
 );
 
-CREATE TABLE IF NOT EXISTS `tb_board_registration`
-(
-    `id`                    BIGINT(20)      UNSIGNED AUTO_INCREMENT,
-    `tb_user_user_id`       VARCHAR(100)    NULL,
-    `status`                VARCHAR(45)     NOT NULL,
-    `reg_date`              TIMESTAMP       NULL DEFAULT CURRENT_TIMESTAMP,
-    `processed_date`        TIMESTAMP       NULL,
-    PRIMARY KEY (`id`),
-    CONSTRAINT `fk_tb_board_registration_tb_user_user_id`
-        FOREIGN KEY (`tb_user_user_id`)
-            REFERENCES `tb_user` (`user_id`)
-            ON DELETE SET NULL
-);
-
-CREATE TABLE IF NOT EXISTS `tb_post`
-(
-    `id`                    BIGINT(20)      UNSIGNED AUTO_INCREMENT,
-    `tb_user_user_id`       VARCHAR(100)    NULL,
-    `tb_board_id`           BIGINT(20)      UNSIGNED NOT NULL,
-    `title`                 VARCHAR(300)    NOT NULL,
-    `content`               LONGTEXT        NOT NULL,
-    `reg_date`              TIMESTAMP       NULL DEFAULT CURRENT_TIMESTAMP,
-    `mod_date`              TIMESTAMP       NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`),
-    CONSTRAINT `fk_tb_post_tb_user_user_id`
-        FOREIGN KEY (`tb_user_user_id`)
-            REFERENCES `tb_user` (`user_id`)
-            ON DELETE SET NULL,
-    CONSTRAINT `fk_tb_post_tb_board_id`
-        FOREIGN KEY (`tb_board_id`)
-            REFERENCES `tb_board` (`id`)
-            ON DELETE CASCADE
-);
-
 CREATE TABLE IF NOT EXISTS oauth2_authorized_client
 (
     `client_registration_id`        VARCHAR(100)    NOT NULL,
@@ -151,3 +122,40 @@ CREATE TABLE IF NOT EXISTS oauth2_registered_client (
     , `client_settings` varchar(2000) NOT NULL
     , `token_settings` varchar(2000) NOT NULL, PRIMARY KEY (id)
 );
+
+
+-- TODO
+-- CREATE TABLE IF NOT EXISTS `tb_post`
+-- (
+--     `id`                    BIGINT(20)      UNSIGNED AUTO_INCREMENT,
+--     `tb_user_user_id`       VARCHAR(100)    NULL,
+--     `tb_board_id`           BIGINT(20)      UNSIGNED NOT NULL,
+--     `title`                 VARCHAR(300)    NOT NULL,
+--     `content`               LONGTEXT        NOT NULL,
+--     `reg_date`              TIMESTAMP       NULL DEFAULT CURRENT_TIMESTAMP,
+--     `mod_date`              TIMESTAMP       NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+--     PRIMARY KEY (`id`),
+--     CONSTRAINT `fk_tb_post_tb_user_user_id`
+--         FOREIGN KEY (`tb_user_user_id`)
+--             REFERENCES `tb_user` (`user_id`)
+--             ON DELETE SET NULL,
+--     CONSTRAINT `fk_tb_post_tb_board_id`
+--         FOREIGN KEY (`tb_board_id`)
+--             REFERENCES `tb_board` (`id`)
+--             ON DELETE CASCADE
+-- );
+--
+-- # TODO
+-- CREATE TABLE IF NOT EXISTS `tb_board_registration`
+-- (
+--     `id`                    BIGINT(20)      UNSIGNED AUTO_INCREMENT,
+--     `tb_user_user_id`       VARCHAR(100)    NULL,
+--     `status`                VARCHAR(45)     NOT NULL,
+--     `reg_date`              TIMESTAMP       NULL DEFAULT CURRENT_TIMESTAMP,
+--     `processed_date`        TIMESTAMP       NULL,
+--     PRIMARY KEY (`id`),
+--     CONSTRAINT `fk_tb_board_registration_tb_user_user_id`
+--         FOREIGN KEY (`tb_user_user_id`)
+--             REFERENCES `tb_user` (`user_id`)
+--             ON DELETE SET NULL
+-- );

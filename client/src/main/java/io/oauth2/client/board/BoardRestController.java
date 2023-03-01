@@ -12,7 +12,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URISyntaxException;
-import java.util.List;
 import java.util.Map;
 
 import static io.oauth2.client.web.utils.ApiUtils.*;
@@ -65,4 +64,18 @@ public class BoardRestController {
 
         return successOk(result);
     }
+
+
+    //TODO
+    @GetMapping("/{category}/{subject}")
+    public ResponseEntity<String> posts(@PathVariable String category, @PathVariable String subject, Pageable pageable){
+        return successOk("TODO posts(can access everyone)");
+    }
+
+    //TODO
+    @PostMapping("/{category}/{subject}/management")
+    public ResponseEntity<String> manageBoard(@PathVariable String category, @PathVariable String subject, @RequestBody String manageContent){
+        return successOk("TODO board Management(either manager, admin)");
+    }
+
 }

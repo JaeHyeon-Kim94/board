@@ -3,10 +3,11 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
   datasource:
-    url: jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1
+    url: jdbc:h2:mem:testdb;MODE=MySQL;
     driver-class-name: org.h2.Driver
     username: sa
     password:
+
   h2:
     console:
       enabled: true
@@ -14,6 +15,7 @@ spring:
     init:
       schema-locations: classpath:schema.sql
       data-locations: classpath:data.sql
+      encoding: UTF-8
   profiles:
     group:
       test: oauth2

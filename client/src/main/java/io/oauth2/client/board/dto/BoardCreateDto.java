@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
 @Data
 public class BoardCreateDto {
     @NotBlank
+    @Length(max = 45)
     private String category;
     @NotBlank
     @Length(max = 45)
@@ -38,9 +39,6 @@ public class BoardCreateDto {
         private String type;
         @NotNull
         private Long level;
-        @NotBlank
-        private String value;
-
         @JsonProperty("http_method")
         private String httpMethod;
 
@@ -48,11 +46,9 @@ public class BoardCreateDto {
             return Resource.builder()
                     .type(dto.getType())
                     .level(dto.getLevel())
-                    .value(dto.getValue())
                     .httpMethod(dto.getHttpMethod())
                     .build();
         }
-
     }
 
     @Data
