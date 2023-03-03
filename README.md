@@ -15,6 +15,16 @@
  - etc : Lombok, Swagger, OAuth2.0
 <br/><br/>
 
+
+### ERD
+
+![ERD](https://user-images.githubusercontent.com/84181831/222631409-f8a3706d-b9b3-4239-8e92-4ee30497e383.png)
+
+
+
+
+
+
 ## 구조 및 역할
 ---
 
